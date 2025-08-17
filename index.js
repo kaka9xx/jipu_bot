@@ -14,7 +14,7 @@ dotenv.config();
 // --- Load lang.json ---
 const langFile = JSON.parse(fs.readFileSync('./lang.json', 'utf8'));
 function t(lang, key, vars = {}) {
-  let text = langFile[lang][key] || '';
+  let text = langFile?.[lang]?.[key] || `[missing:${key}]`;
   for (const [k, v] of Object.entries(vars)) {
     text = text.replace(`{${k}}`, v);
   }
@@ -25,10 +25,9 @@ function t(lang, key, vars = {}) {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// --- Telegram Bot (Webhook mode) ---
+// --- Telegram Bot ---
 const bot = new TelegramBot(process.env.BOT_TOKEN);
 const url = process.env.RENDER_EXTERNAL_URL || `https://your-app.onrender.com`;
-
 bot.setWebHook(`${url}/bot${process.env.BOT_TOKEN}`);
 
 app.post(`/bot${process.env.BOT_TOKEN}`, express.json(), (req, res) => {
@@ -36,7 +35,7 @@ app.post(`/bot${process.env.BOT_TOKEN}`, express.json(), (req, res) => {
   res.sendStatus(200);
 });
 
-// Helper: render Main Menu
+// --- Helper: Main Menu ---
 function sendMainMenu(bot, chatId, lang) {
   const intro = t(lang, 'start');
   bot.sendMessage(chatId, intro, {
@@ -70,60 +69,32 @@ bot.onText(/\/balance/, (msg) => handleBalance(bot, msg, t));
 bot.onText(/\/ref/, (msg) => handleReferral(bot, msg, t));
 bot.onText(/\/lang/, (msg) => handleLang(bot, msg, t));
 
-// --- Catch language selection ---
 bot.on('message', (msg) => handleLangChoice(bot, msg, t));
 
-// Handle menu button clicks
+// --- Callback queries ---
 bot.on('callback_query', (query) => {
   const chatId = query.message.chat.id;
   const userId = query.from.id;
   const db = JSON.parse(fs.readFileSync('./database/users.json'));
   const lang = db[userId + '_lang'] || 'vi';
 
+  // trả lời callback NGAY để tránh lỗi "query too old"
+  bot.answerCallbackQuery(query.id).catch(() => {});
+
+  const fakeMsg = { chat: { id: chatId }, from: query.from };
+
   switch (query.data) {
-    case 'farm':
-      handleFarm(bot, { chat: { id: chatId }, from: query.from }, t);
-      break;
-    case 'balance':
-      handleBalance(bot, { chat: { id: chatId }, from: query.from }, t);
-      break;
-    case 'ref':
-      handleReferral(bot, { chat: { id: chatId }, from: query.from }, t);
-      break;
-    case 'lang':
-      handleLang(bot, { chat: { id: chatId }, from: query.from }, t);
-      break;
-    case 'help':
-      handleHelp(bot, { chat: { id: chatId }, from: query.from }, t);
-      break;
-    case 'back_menu':
-      sendMainMenu(bot, chatId, lang);
-      break;
+    case 'farm': handleFarm(bot, fakeMsg, t); break;
+    case 'balance': handleBalance(bot, fakeMsg, t); break;
+    case 'ref': handleReferral(bot, fakeMsg, t); break;
+    case 'lang': handleLang(bot, fakeMsg, t); break;
+    case 'help': handleHelp(bot, fakeMsg, t); break;
+    case 'back_menu': sendMainMenu(bot, chatId, lang); break;
   }
-
-  bot.answerCallbackQuery(query.id);
 });
 
-// --- Extra Web Routes ---
-app.get('/', (req, res) => {
-  res.send('<h2>🤖 JIPU Bot (Webhook mode) is running!</h2><p>Check /leaderboard</p>');
-});
-
-app.get('/balance/:id', (req, res) => {
-  const db = JSON.parse(fs.readFileSync('./database/users.json'));
-  const total = db[req.params.id] || 0;
-  res.json({ user: req.params.id, balance: total });
-});
-
-app.get('/leaderboard', (req, res) => {
-  const db = JSON.parse(fs.readFileSync('./database/users.json'));
-  const users = Object.entries(db)
-    .filter(([k]) => !k.endsWith('_lang'))
-    .map(([id, score]) => ({ id, score }))
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 10);
-  res.json(users);
-});
+// --- Web routes ---
+app.get('/', (req, res) => res.send('<h2>🤖 JIPU Bot is running</h2>'));
 
 app.listen(PORT, () => {
   console.log(`🌐 Web server running on port ${PORT}`);

@@ -1,8 +1,16 @@
 {
   "vi": {
-    "start": "🚀 **JIPU Army Awakens** 🚀\n\nMột kỷ nguyên mới bắt đầu. Vương quốc *JipuLand* đã ngủ yên quá lâu, và giờ cần những chiến binh thật sự.\n\n⚔️ Mỗi lần bạn farm = một đòn tấn công vào bóng tối\n💎 Năng lượng bạn tích lũy = sức mạnh để hồi sinh **JIPU**\n🏆 Khi JIPU trỗi dậy, những ai trung thành farm từ sớm sẽ nhận phần thưởng xứng đáng.\n\n👉 Chọn hành động của bạn bằng cách nhấn nút bên dưới:"
+    "start": "🚀 **JIPU Army Awakens** 🚀\n\nMột kỷ nguyên mới bắt đầu. Vương quốc *JipuLand* đã ngủ yên quá lâu, và giờ cần những chiến binh thật sự.\n\n⚔️ Mỗi lần bạn farm = một đòn tấn công vào bóng tối\n💎 Năng lượng bạn tích lũy = sức mạnh để hồi sinh **JIPU**\n🏆 Khi JIPU trỗi dậy, những ai trung thành farm từ sớm sẽ nhận phần thưởng xứng đáng.\n\n👉 Chọn hành động của bạn bằng cách nhấn nút bên dưới:",
+    "farm": "⚔️ Bạn đã farm và nhận thêm 1 năng lượng!",
+    "balance": "💰 Số dư của bạn: {amount} năng lượng",
+    "ref": "👥 Đây là link giới thiệu của bạn: {link}",
+    "help": "ℹ️ Các lệnh: /farm, /balance, /ref, /lang"
   },
   "en": {
-    "start": "🚀 **JIPU Army Awakens** 🚀\n\nA new era begins. The kingdom of *JipuLand* has slumbered too long, and now it needs true warriors.\n\n⚔️ Each farm = a strike against the darkness\n💎 Your energy = the power to revive **JIPU**\n🏆 When JIPU rises, those who farmed early will be rewarded.\n\n👉 Choose your action by tapping the buttons below:"
-  }
+    "start": "🚀 **JIPU Army Awakens** 🚀\n\nA new era begins. The kingdom of *JipuLand* has slumbered too long, and now it needs true warriors.\n\n⚔️ Each farm = a strike against the darkness\n💎 Your energy = the power to revive **JIPU**\n🏆 When JIPU rises, those who farmed early will be rewarded.\n\n👉 Choose your action by tapping the buttons below:",
+    "farm": "⚔️ You farmed and gained +1 energy!",
+    "balance": "💰 Your balance: {amount} energy",
+    "ref": "👥 Your referral link: {link}",
+    "help": "ℹ️ Commands: /farm, /balance, /ref, /lang"
+ }
 }
