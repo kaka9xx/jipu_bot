@@ -1,4 +1,6 @@
-export function handleFarm(bot, msg, t, lang) {
-  const chatId = msg.chat.id;
-  bot.sendMessage(chatId, "🌱 Bạn đã farm được 10 JIPU!", { parse_mode: "Markdown" });
+export function handleFarm(bot, msg, t) {
+  const lang = "vi";
+  bot.sendMessage(msg.chat.id, t(lang, "farm"), {
+    reply_markup: { keyboard: [[{ text: "/menu" }]], resize_keyboard: true }
+  });
 }

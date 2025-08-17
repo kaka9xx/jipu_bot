@@ -1,4 +1,5 @@
-export function handleReferral(bot, msg, t, lang) {
-  const chatId = msg.chat.id;
-  bot.sendMessage(chatId, "👥 Đây là link giới thiệu của bạn: https://t.me/jipu_bot?start=ref123", { parse_mode: "Markdown" });
+export function handleReferral(bot, msg, t) {
+  const lang = "vi";
+  const link = `https://t.me/yourbot?start=${msg.from.id}`;
+  bot.sendMessage(msg.chat.id, t(lang, "ref", { link }));
 }

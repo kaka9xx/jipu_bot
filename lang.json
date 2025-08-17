@@ -1,14 +1,20 @@
 {
   "vi": {
-    "start": "🚀 **JIPU Army Awakens** 🚀\nMột kỷ nguyên mới bắt đầu...",
-    "help": "📖 Danh sách lệnh:\n/start - Giới thiệu\n/farm - Farm coin\n/balance - Xem số dư\n/ref - Giới thiệu bạn bè\n/lang - Đổi ngôn ngữ",
-    "choose_lang": "🌐 Chọn ngôn ngữ:",
-    "lang_set": "✅ Ngôn ngữ đã đổi sang Tiếng Việt"
+    "start": "🚀 Chào mừng đến với **JIPU Army**!\\nHãy chọn một lệnh bên dưới để bắt đầu:",
+    "help": "📖 Đây là các lệnh hỗ trợ của bot.",
+    "farm": "⛏ Bạn đã farm thành công!",
+    "balance": "💰 Số dư của bạn là {amount} JIPU.",
+    "ref": "🔗 Đây là link giới thiệu của bạn: {link}",
+    "lang": "🌐 Vui lòng chọn ngôn ngữ:",
+    "about": "🏰 Đây là Vương quốc JIPU Army!"
   },
   "en": {
-    "start": "🚀 **JIPU Army Awakens** 🚀\nA new era begins...",
-    "help": "📖 Command list:\n/start - Introduction\n/farm - Farm coins\n/balance - Check balance\n/ref - Referral system\n/lang - Change language",
-    "choose_lang": "🌐 Choose language:",
-    "lang_set": "✅ Language changed to English"
+    "start": "🚀 Welcome to **JIPU Army**!\\nChoose a command below to start:",
+    "help": "📖 Here are the bot help commands.",
+    "farm": "⛏ You have farmed successfully!",
+    "balance": "💰 Your balance is {amount} JIPU.",
+    "ref": "🔗 Here is your referral link: {link}",
+    "lang": "🌐 Please choose your language:",
+    "about": "🏰 Welcome to JIPU Army Kingdom!"
   }
 }

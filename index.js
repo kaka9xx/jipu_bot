@@ -1,95 +1,47 @@
-import TelegramBot from "node-telegram-bot-api";
 import express from "express";
-import bodyParser from "body-parser";
+import TelegramBot from "node-telegram-bot-api";
+import dotenv from "dotenv";
 import fs from "fs";
 import { menuKeyboard } from "./menu.js";
 import { handleFarm } from "./services/farm.js";
-import { handleBalance } from "./services/balance.js";
 import { handleReferral } from "./services/referral.js";
+import { handleBalance } from "./services/balance.js";
 import { handleHelp } from "./services/help.js";
-import langs from "./lang.json" assert { type: "json" };
+import { handleLang, handleLangChoice } from "./services/lang.js";
 
-const TOKEN = process.env.BOT_TOKEN;
-const URL = process.env.RENDER_EXTERNAL_URL || "https://jipu-bot.onrender.com";
-const PORT = process.env.PORT || 10000;
+dotenv.config();
 
-const bot = new TelegramBot(TOKEN, { webHook: true });
-bot.setWebHook(`${URL}/bot${TOKEN}`);
-
-const app = express();
-app.use(bodyParser.json());
-app.post(`/bot${TOKEN}`, (req, res) => {
-  bot.processUpdate(req.body);
-  res.sendStatus(200);
-});
-
-function t(lang, key) {
-  return langs[lang]?.[key] || langs["en"][key] || "⚠️ Missing text";
+// Load ngôn ngữ
+const langs = JSON.parse(fs.readFileSync("./lang.json", "utf8"));
+function t(lang, key, vars = {}) {
+  let text = langs[lang][key] || "";
+  for (const [k, v] of Object.entries(vars)) {
+    text = text.replace(`{${k}}`, v);
+  }
+  return text;
 }
 
-if (!fs.existsSync("./database")) fs.mkdirSync("./database");
-if (!fs.existsSync("./database/users.json")) fs.writeFileSync("./database/users.json", "{}");
+const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 
-function getLang(userId) {
-  let db = JSON.parse(fs.readFileSync("./database/users.json", "utf8"));
-  return db[userId + "_lang"] || "vi";
-}
-function setLang(userId, lang) {
-  let db = JSON.parse(fs.readFileSync("./database/users.json", "utf8"));
-  db[userId + "_lang"] = lang;
-  fs.writeFileSync("./database/users.json", JSON.stringify(db, null, 2));
-}
-
+// Xử lý lệnh /start
 bot.onText(/\/start/, (msg) => {
-  const chatId = msg.chat.id;
-  const lang = getLang(msg.from.id);
-  bot.sendMessage(chatId, t(lang, "start"), { parse_mode: "Markdown", ...menuKeyboard(lang) });
-});
-
-bot.onText(/\/help/, (msg) => handleHelp(bot, msg, t, getLang(msg.from.id)));
-bot.onText(/\/farm/, (msg) => handleFarm(bot, msg, t, getLang(msg.from.id)));
-bot.onText(/\/balance/, (msg) => handleBalance(bot, msg, t, getLang(msg.from.id)));
-bot.onText(/\/ref/, (msg) => handleReferral(bot, msg, t, getLang(msg.from.id)));
-
-bot.onText(/\/lang/, (msg) => {
-  const chatId = msg.chat.id;
-  const lang = getLang(msg.from.id);
-  bot.sendMessage(chatId, t(lang, "choose_lang"), {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: "🇻🇳 Tiếng Việt", callback_data: "set_lang_vi" }, { text: "🇬🇧 English", callback_data: "set_lang_en" }]
-      ]
-    }
+  const lang = "vi";
+  bot.sendMessage(msg.chat.id, t(lang, "start"), {
+    reply_markup: menuKeyboard(lang),
   });
 });
 
-bot.on("callback_query", (query) => {
-  const chatId = query.message.chat.id;
-  const userId = query.from.id;
-  let lang = getLang(userId);
+bot.onText(/\/help/, (msg) => handleHelp(bot, msg, t));
+bot.onText(/\/farm/, (msg) => handleFarm(bot, msg, t));
+bot.onText(/\/balance/, (msg) => handleBalance(bot, msg, t));
+bot.onText(/\/ref/, (msg) => handleReferral(bot, msg, t));
+bot.onText(/\/lang/, (msg) => handleLang(bot, msg, t));
 
-  switch (query.data) {
-    case "set_lang_vi":
-      setLang(userId, "vi");
-      bot.answerCallbackQuery(query.id, { text: "✅ Đã đổi sang Tiếng Việt" });
-      return bot.sendMessage(chatId, t("vi", "lang_set"), menuKeyboard("vi"));
+// Catch language selection
+bot.on("message", (msg) => handleLangChoice(bot, msg, t));
 
-    case "set_lang_en":
-      setLang(userId, "en");
-      bot.answerCallbackQuery(query.id, { text: "✅ Changed to English" });
-      return bot.sendMessage(chatId, t("en", "lang_set"), menuKeyboard("en"));
-
-    case "menu_farm":
-      return handleFarm(bot, query.message, t, lang);
-    case "menu_balance":
-      return handleBalance(bot, query.message, t, lang);
-    case "menu_ref":
-      return handleReferral(bot, query.message, t, lang);
-    case "menu_help":
-      return handleHelp(bot, query.message, t, lang);
-    case "menu_start":
-      return bot.sendMessage(chatId, t(lang, "start"), { parse_mode: "Markdown", ...menuKeyboard(lang) });
-  }
-});
-
+// Web server cho Render
+const app = express();
+const PORT = process.env.PORT || 10000;
+app.get("/", (req, res) => res.send("Bot is running..."));
 app.listen(PORT, () => console.log(`🌐 Web server running on port ${PORT}`));
