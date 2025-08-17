@@ -1,12 +1,8 @@
 import fs from 'fs';
+import { sendMainMenu } from './menu.js';
 
 export function handleLang(bot, msg, t) {
-  const dbPath = './database/users.json';
-  const db = JSON.parse(fs.readFileSync(dbPath));
-  const userId = msg.from.id;
-  const lang = db[userId + '_lang'] || 'vi';
-
-  bot.sendMessage(msg.chat.id, "🌍 Chọn ngôn ngữ:", {
+  bot.sendMessage(msg.chat.id, "🌍 Select language / Chọn ngôn ngữ:", {
     reply_markup: {
       inline_keyboard: [
         [
@@ -19,20 +15,24 @@ export function handleLang(bot, msg, t) {
   });
 }
 
-export function handleLangChoice(bot, msg, t) {
-  if (!msg.data) return; // chỉ xử lý callback
+export function handleLangChoice(bot, query, t) {
   const dbPath = './database/users.json';
-  const db = JSON.parse(fs.readFileSync(dbPath));
-  const userId = msg.from.id;
+  let db = {};
+  if (fs.existsSync(dbPath)) db = JSON.parse(fs.readFileSync(dbPath));
+  const userId = query.from.id;
+  const chatId = query.message.chat.id;
 
-  if (msg.data === "set_lang_vi") {
+  if (query.data === "set_lang_vi") {
     db[userId + '_lang'] = 'vi';
     fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
-    bot.sendMessage(msg.message.chat.id, "✅ Đã chuyển sang Tiếng Việt");
+    bot.sendMessage(chatId, "✅ Đã chuyển sang Tiếng Việt");
+    sendMainMenu(bot, chatId, t, userId);
   }
-  if (msg.data === "set_lang_en") {
+
+  if (query.data === "set_lang_en") {
     db[userId + '_lang'] = 'en';
     fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
-    bot.sendMessage(msg.message.chat.id, "✅ Language set to English");
+    bot.sendMessage(chatId, "✅ Language set to English");
+    sendMainMenu(bot, chatId, t, userId);
   }
 }

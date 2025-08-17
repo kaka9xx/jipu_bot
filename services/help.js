@@ -1,7 +1,14 @@
 import fs from 'fs';
+import { sendMainMenu } from './menu.js';
 
 export function handleHelp(bot, msg, t) {
-  const db = JSON.parse(fs.readFileSync('./database/users.json'));
-  const lang = db[msg.from.id + '_lang'] || 'vi';
-  bot.sendMessage(msg.chat.id, t(lang, 'help'));
+  const dbPath = './database/users.json';
+  let db = {};
+  if (fs.existsSync(dbPath)) db = JSON.parse(fs.readFileSync(dbPath));
+  const userId = msg.from.id;
+  const chatId = msg.chat.id;
+  const lang = db[userId + '_lang'] || 'vi';
+
+  bot.sendMessage(chatId, t(lang, 'help'));
+  sendMainMenu(bot, chatId, t, userId);
 }
