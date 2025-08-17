@@ -2,8 +2,11 @@ import TelegramBot from 'node-telegram-bot-api';
 import { farmCoins } from './services/farm.js';
 import fs from 'fs';
 import dotenv from 'dotenv';
+import express from 'express';
+
 dotenv.config();
 
+// --- i18n function ---
 function t(lang, key, value) {
   const messages = {
     vi: {
@@ -13,13 +16,14 @@ function t(lang, key, value) {
     },
     en: {
       farm_success: `✅ Done!\nYou farmed +${value} Jipu Energy ⚡\nYour current total: {TOTAL}\n\nCome back in 6 hours to farm again.\n✨ JipuLand thanks you for the contribution!`,
-      start:`✨ Welcome to JipuLand ✨\nFar beyond the Solana universe lies the mysterious kingdom of JipuLand – home of small mint‑colored creatures full of positive energy.\n\nThe JIPU energy is running low…\nYou have been chosen to help restore the kingdom by farming Jipu Energy every day.\n\n🟢 Each farm adds energy to JipuLand\n🟣 Energy will be converted into rewards when the kingdom is restored\n\n👉 Start your journey now:\n/farm`,
+      start:`✨ Welcome to JipuLand ✨\nFar beyond the Solana universe lies the mysterious kingdom of JipuLand – home of small mint-colored creatures full of positive energy.\n\nThe JIPU energy is running low…\nYou have been chosen to help restore the kingdom by farming Jipu Energy every day.\n\n🟢 Each farm adds energy to JipuLand\n🟣 Energy will be converted into rewards when the kingdom is restored\n\n👉 Start your journey now:\n/farm`,
       help:`📒 Help\n/farm – Farm Jipu Energy (once every 6h)\n/balance – Check your Jipu Energy\n/ref – Get your referral link (+10 Energy per invite)\n/help – Show this help menu\n\n🎯 Goal: Collect as much Energy as possible to receive JIPU Tokens when the kingdom revives.`
     }
   };
   return messages[lang][key];
 }
 
+// --- Telegram Bot ---
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 
 bot.onText(/\/start/, (msg) => {
@@ -69,4 +73,23 @@ bot.on('message', (msg) => {
     fs.writeFileSync('./database/users.json', JSON.stringify(db, null, 2));
     bot.sendMessage(msg.chat.id, 'Language set to English.');
   }
+});
+
+// --- Express Web Server ---
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+  res.send('🤖 Jipu Bot is running with Web Server!');
+});
+
+// Example API: get balance by user id
+app.get('/balance/:id', (req, res) => {
+  const db = JSON.parse(fs.readFileSync('./database/users.json'));
+  const total = db[req.params.id] || 0;
+  res.json({ user: req.params.id, balance: total });
+});
+
+app.listen(PORT, () => {
+  console.log(`🌐 Web server running at http://localhost:${PORT}`);
 });
