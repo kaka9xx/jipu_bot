@@ -1,5 +1,5 @@
 {
-  "name": "jipu-bot-farm",
+  "name": "jipu_bot",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
