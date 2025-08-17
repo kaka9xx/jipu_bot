@@ -11,8 +11,8 @@ import { handleLang, handleLangChoice } from './services/lang.js';
 
 dotenv.config();
 
-// --- Load language file ---
-const langFile = JSON.parse(fs.readFileSync('./lang.json','utf8'));
+// --- Load lang.json ---
+const langFile = JSON.parse(fs.readFileSync('./lang.json', 'utf8'));
 function t(lang, key, vars = {}) {
   let text = langFile[lang][key] || '';
   for (const [k, v] of Object.entries(vars)) {
@@ -27,24 +27,37 @@ const PORT = process.env.PORT || 3000;
 
 // --- Telegram Bot (Webhook mode) ---
 const bot = new TelegramBot(process.env.BOT_TOKEN);
-
-// URL public mà Render cấp cho bạn (vd: https://your-service.onrender.com)
 const url = process.env.RENDER_EXTERNAL_URL || `https://your-app.onrender.com`;
 
-// Đăng ký webhook
 bot.setWebHook(`${url}/bot${process.env.BOT_TOKEN}`);
 
-// Route nhận update từ Telegram
 app.post(`/bot${process.env.BOT_TOKEN}`, express.json(), (req, res) => {
   bot.processUpdate(req.body);
   res.sendStatus(200);
 });
 
+// --- Helper: render Main Menu ---
+function sendMainMenu(bot, chatId, lang) {
+  const intro = t(lang, 'start');
+  bot.sendMessage(chatId, intro, {
+    parse_mode: 'Markdown',
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "⚔️ Farm", callback_data: "farm" }],
+        [{ text: "💰 Balance", callback_data: "balance" }],
+        [{ text: "👥 Referral", callback_data: "ref" }],
+        [{ text: "🌍 Language", callback_data: "lang" }],
+        [{ text: "ℹ️ Help", callback_data: "help" }]
+      ]
+    }
+  });
+}
+
 // --- Commands ---
 bot.onText(/\/start/, (msg) => {
   const db = JSON.parse(fs.readFileSync('./database/users.json'));
   const lang = db[msg.from.id + '_lang'] || 'vi';
-  bot.sendMessage(msg.chat.id, t(lang, 'start'));
+  sendMainMenu(bot, msg.chat.id, lang);
 });
 
 bot.onText(/\/help/, (msg) => handleHelp(bot, msg, t));
@@ -53,12 +66,43 @@ bot.onText(/\/balance/, (msg) => handleBalance(bot, msg, t));
 bot.onText(/\/ref/, (msg) => handleReferral(bot, msg, t));
 bot.onText(/\/lang/, (msg) => handleLang(bot, msg, t));
 
-// Catch language selection
+// --- Catch language selection ---
 bot.on('message', (msg) => handleLangChoice(bot, msg, t));
+
+// --- Handle menu button clicks ---
+bot.on('callback_query', (query) => {
+  const msg = query.message;
+  const userId = query.from.id;
+  const db = JSON.parse(fs.readFileSync('./database/users.json'));
+  const lang = db[userId + '_lang'] || 'vi';
+
+  switch (query.data) {
+    case 'farm':
+      handleFarm(bot, msg, t);
+      break;
+    case 'balance':
+      handleBalance(bot, msg, t);
+      break;
+    case 'ref':
+      handleReferral(bot, msg, t);
+      break;
+    case 'lang':
+      handleLang(bot, msg, t);
+      break;
+    case 'help':
+      handleHelp(bot, msg, t);
+      break;
+    case 'back_menu':
+      sendMainMenu(bot, msg.chat.id, lang);
+      break;
+  }
+
+  bot.answerCallbackQuery(query.id);
+});
 
 // --- Extra Web Routes ---
 app.get('/', (req, res) => {
-  res.send('<h2>🤖 JIPU Bot (Webhook mode) is running!</h2><p>Try /leaderboard</p>');
+  res.send('<h2>🤖 JIPU Bot (Webhook mode) is running!</h2><p>Check /leaderboard</p>');
 });
 
 app.get('/balance/:id', (req, res) => {
@@ -77,12 +121,6 @@ app.get('/leaderboard', (req, res) => {
   res.json(users);
 });
 
-// --- Start server ---
 app.listen(PORT, () => {
   console.log(`🌐 Web server running on port ${PORT}`);
-});
-
-bot.on('message', (msg) => {
-  console.log('📩 Update từ Telegram:', msg);
-  handleLangChoice(bot, msg, t);
 });
