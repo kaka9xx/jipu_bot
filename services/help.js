@@ -1,3 +1,4 @@
 export function handleHelp(bot, msg, t, lang) {
-  bot.sendMessage(msg.chat.id, t(lang, 'help'));
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, t(lang, "help"), { parse_mode: "Markdown" });
 }

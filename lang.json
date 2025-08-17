@@ -1,34 +1,14 @@
 {
   "vi": {
     "start": "🚀 **JIPU Army Awakens** 🚀\nMột kỷ nguyên mới bắt đầu...",
-    "choose_next": "👉 Chọn hành động tiếp theo:",
-    "menu_farm": "Farm",
-    "menu_balance": "Số dư",
-    "menu_ref": "Giới thiệu",
-    "menu_help": "Trợ giúp",
-    "menu_lang": "Ngôn ngữ",
-    "menu_intro": "Giới thiệu",
-    "back_menu": "Quay lại Menu",
-    "farm_result": "⚔️ Bạn vừa farm xong, sức mạnh JIPU tăng lên!",
-    "balance_result": "💰 Số dư hiện tại của bạn: 100 JIPU",
-    "ref_result": "👥 Link giới thiệu của bạn: {link}",
+    "help": "📖 Danh sách lệnh:\n/start - Giới thiệu\n/farm - Farm coin\n/balance - Xem số dư\n/ref - Giới thiệu bạn bè\n/lang - Đổi ngôn ngữ",
     "choose_lang": "🌐 Chọn ngôn ngữ:",
-    "help_text": "ℹ️ Các lệnh khả dụng:\n/farm - Farm JIPU\n/balance - Xem số dư\n/ref - Lấy link giới thiệu\n/lang - Đổi ngôn ngữ"
+    "lang_set": "✅ Ngôn ngữ đã đổi sang Tiếng Việt"
   },
   "en": {
     "start": "🚀 **JIPU Army Awakens** 🚀\nA new era begins...",
-    "choose_next": "👉 Choose your next action:",
-    "menu_farm": "Farm",
-    "menu_balance": "Balance",
-    "menu_ref": "Referral",
-    "menu_help": "Help",
-    "menu_lang": "Language",
-    "menu_intro": "Intro",
-    "back_menu": "Back to Menu",
-    "farm_result": "⚔️ You just farmed, JIPU power increased!",
-    "balance_result": "💰 Your current balance: 100 JIPU",
-    "ref_result": "👥 Your referral link: {link}",
-    "choose_lang": "🌐 Choose your language:",
-    "help_text": "ℹ️ Available commands:\n/farm - Farm JIPU\n/balance - Check balance\n/ref - Get referral link\n/lang - Change language"
+    "help": "📖 Command list:\n/start - Introduction\n/farm - Farm coins\n/balance - Check balance\n/ref - Referral system\n/lang - Change language",
+    "choose_lang": "🌐 Choose language:",
+    "lang_set": "✅ Language changed to English"
   }
 }
