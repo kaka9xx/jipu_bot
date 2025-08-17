@@ -1,47 +1,70 @@
 import express from "express";
 import TelegramBot from "node-telegram-bot-api";
-import dotenv from "dotenv";
 import fs from "fs";
-import { menuKeyboard } from "./menu.js";
+import langs from "./lang.json" assert { type: "json" };
+import menu from "./menu.js";
+
+// Import services
 import { handleFarm } from "./services/farm.js";
 import { handleReferral } from "./services/referral.js";
 import { handleBalance } from "./services/balance.js";
 import { handleHelp } from "./services/help.js";
-import { handleLang, handleLangChoice } from "./services/lang.js";
+import { handleLang } from "./services/lang.js";
 
-dotenv.config();
+const token = process.env.BOT_TOKEN;
+const bot = new TelegramBot(token, { webHook: true });
+const app = express();
 
-// Load ngôn ngữ
-const langs = JSON.parse(fs.readFileSync("./lang.json", "utf8"));
-function t(lang, key, vars = {}) {
-  let text = langs[lang][key] || "";
-  for (const [k, v] of Object.entries(vars)) {
-    text = text.replace(`{${k}}`, v);
-  }
-  return text;
-}
+// Webhook setup (Render free)
+const PORT = process.env.PORT || 10000;
+const URL = process.env.RENDER_EXTERNAL_URL || `https://jipu-bot.onrender.com`;
+bot.setWebHook(`${URL}/bot${token}`);
 
-const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
+app.use(express.json());
 
-// Xử lý lệnh /start
+// Webhook endpoint
+app.post(`/bot${token}`, (req, res) => {
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
+});
+
+// /start
 bot.onText(/\/start/, (msg) => {
+  const chatId = msg.chat.id;
   const lang = "vi";
-  bot.sendMessage(msg.chat.id, t(lang, "start"), {
-    reply_markup: menuKeyboard(lang),
+  const t = langs[lang];
+
+  bot.sendMessage(chatId, t.intro, {
+    reply_markup: { inline_keyboard: menu(t) }
   });
 });
 
-bot.onText(/\/help/, (msg) => handleHelp(bot, msg, t));
-bot.onText(/\/farm/, (msg) => handleFarm(bot, msg, t));
-bot.onText(/\/balance/, (msg) => handleBalance(bot, msg, t));
-bot.onText(/\/ref/, (msg) => handleReferral(bot, msg, t));
-bot.onText(/\/lang/, (msg) => handleLang(bot, msg, t));
+// Handle menu buttons
+bot.on("callback_query", (cb) => {
+  const chatId = cb.message.chat.id;
+  const lang = "vi"; // TODO: load từ database user
+  const t = langs[lang];
 
-// Catch language selection
-bot.on("message", (msg) => handleLangChoice(bot, msg, t));
+  switch (cb.data) {
+    case "farm":
+      handleFarm(bot, chatId, t);
+      break;
+    case "balance":
+      handleBalance(bot, chatId, t);
+      break;
+    case "referral":
+      handleReferral(bot, chatId, t);
+      break;
+    case "help":
+      handleHelp(bot, chatId, t);
+      break;
+    case "lang":
+      handleLang(bot, chatId);
+      break;
+  }
+  bot.answerCallbackQuery(cb.id);
+});
 
-// Web server cho Render
-const app = express();
-const PORT = process.env.PORT || 10000;
-app.get("/", (req, res) => res.send("Bot is running..."));
-app.listen(PORT, () => console.log(`🌐 Web server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🌐 Web server running on port ${PORT}`);
+});

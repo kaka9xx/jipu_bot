@@ -1,5 +1,3 @@
-export function handleReferral(bot, msg, t) {
-  const lang = "vi";
-  const link = `https://t.me/yourbot?start=${msg.from.id}`;
-  bot.sendMessage(msg.chat.id, t(lang, "ref", { link }));
+export function handleReferral(bot, chatId, t) {
+  bot.sendMessage(chatId, "👥 Referral link: https://t.me/jipu_bot?start=ref123");
 }

@@ -1,9 +1,15 @@
-export function menuKeyboard(lang) {
-  return {
-    keyboard: [
-      [{ text: "/farm" }, { text: "/balance" }, { text: "/ref" }],
-      [{ text: "/help" }, { text: "/lang" }, { text: "/about" }],
+export default function menu(t) {
+  return [
+    [
+      { text: t.btnFarm, callback_data: "farm" },
+      { text: t.btnBalance, callback_data: "balance" }
     ],
-    resize_keyboard: true,
-  };
+    [
+      { text: t.btnReferral, callback_data: "referral" },
+      { text: t.btnHelp, callback_data: "help" }
+    ],
+    [
+      { text: t.btnLang, callback_data: "lang" }
+    ]
+  ];
 }

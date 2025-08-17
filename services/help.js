@@ -1,4 +1,3 @@
-export function handleHelp(bot, msg, t) {
-  const lang = "vi";
-  bot.sendMessage(msg.chat.id, t(lang, "help"));
+export function handleHelp(bot, chatId, t) {
+  bot.sendMessage(chatId, "❓ Help section here...");
 }
