@@ -1,18 +1,38 @@
 {
   "vi": {
-    "intro": "🚀 **JIPU Army** 🚀\nChào mừng bạn đến với JIPU Bot!",
-    "btnFarm": "⚔️ Farm",
-    "btnBalance": "💰 Số dư",
-    "btnReferral": "👥 Giới thiệu",
-    "btnHelp": "❓ Trợ giúp",
-    "btnLang": "🌐 Ngôn ngữ"
+    "start": "🚀 **JIPU Army Awakens** 🚀\nVương quốc JipuLand cần những chiến binh thực thụ.\n\n⚔️ Mỗi lần bạn farm = một đòn tấn công vào bóng tối\n💎 Năng lượng bạn tích lũy = sức mạnh để hồi sinh JIPU\n🏆 Ai farm trung thành từ sớm sẽ nhận phần thưởng xứng đáng.\n\nChọn chức năng bên dưới:",
+    "choose_next": "➕ Chọn hành động tiếp theo:",
+    "back_menu": "Về menu",
+    "farm_btn": "Farm",
+    "balance_btn": "Số dư",
+    "referral_btn": "Giới thiệu",
+    "help_btn": "Hướng dẫn",
+    "lang_btn": "Ngôn ngữ",
+    "about_btn": "Giới thiệu",
+    "farm_ok": "🌾 Bạn đã farm +{gain}. Số dư hiện tại: {balance}.",
+    "balance_text": "💰 Số dư của bạn: {balance}",
+    "referral_text": "👥 Link giới thiệu của bạn:\n{link}\n\nMời bạn bè tham gia để nhận thưởng!",
+    "help_text": "❓ Hướng dẫn:\n• Nhấn 'Farm' để tích điểm\n• 'Số dư' để xem điểm\n• 'Giới thiệu' để lấy link mời\n• 'Ngôn ngữ' để đổi ngôn ngữ\n• 'Giới thiệu' để xem lore JIPU",
+    "about_text": "📜 Truyền thuyết JIPU:\nJIPU từng ngủ yên dưới lớp tro tàn của thời gian. Khi âm khí trỗi dậy, chỉ những chiến binh kiên định mới đánh thức được JIPU. Hãy farm, tích lũy năng lượng và sẵn sàng cho thời khắc phục sinh.",
+    "lang_choose": "🌐 Chọn ngôn ngữ:",
+    "lang_set_ok": "✅ Đã đổi ngôn ngữ."
   },
   "en": {
-    "intro": "🚀 **JIPU Army** 🚀\nWelcome to JIPU Bot!",
-    "btnFarm": "⚔️ Farm",
-    "btnBalance": "💰 Balance",
-    "btnReferral": "👥 Referral",
-    "btnHelp": "❓ Help",
-    "btnLang": "🌐 Language"
+    "start": "🚀 **JIPU Army Awakens** 🚀\nJipuLand needs true warriors.\n\n⚔️ Each farm = a strike into the dark\n💎 Your energy = the power to revive JIPU\n🏆 Early loyal farmers will be rewarded.\n\nPick an option below:",
+    "choose_next": "➕ Choose your next action:",
+    "back_menu": "Back to menu",
+    "farm_btn": "Farm",
+    "balance_btn": "Balance",
+    "referral_btn": "Referral",
+    "help_btn": "Help",
+    "lang_btn": "Language",
+    "about_btn": "About",
+    "farm_ok": "🌾 You farmed +{gain}. Current balance: {balance}.",
+    "balance_text": "💰 Your balance: {balance}",
+    "referral_text": "👥 Your referral link:\n{link}\n\nInvite friends to earn rewards!",
+    "help_text": "❓ Help:\n• Tap 'Farm' to gain points\n• 'Balance' to view your points\n• 'Referral' to get your invite link\n• 'Language' to change language\n• 'About' to read JIPU lore",
+    "about_text": "📜 JIPU Lore:\nJIPU slept beneath the ashes of time. As the gloom rises, only steadfast warriors can awaken it. Farm, gather energy, and prepare for the revival.",
+    "lang_choose": "🌐 Choose your language:",
+    "lang_set_ok": "✅ Language updated."
   }
 }

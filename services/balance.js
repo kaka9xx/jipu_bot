@@ -1,3 +1,6 @@
-export function handleBalance(bot, chatId, t) {
-  bot.sendMessage(chatId, "💰 Balance: 100 JIPU");
+import { getBalance } from "../utils/db.js";
+
+export async function handleBalance(bot, chatId, userId, t, lang) {
+  const bal = await getBalance(userId);
+  await bot.sendMessage(chatId, t(lang, "balance_text", { balance: bal }));
 }
