@@ -1,8 +1,11 @@
-import { getUser } from "../utils/db.js";
+export async function handleReferral(bot, msg, t, lang) {
+  const userId = msg.from.id;
+  const chatId = msg.chat.id;
 
-export async function handleReferral(bot, chatId, userId, t, lang, botUsername) {
-  await getUser(userId); // đảm bảo user tồn tại trong DB
-  const link = `https://t.me/${botUsername}?start=${userId}`;
+  const link = `https://t.me/${bot.username}?start=${userId}`;
   const text = t(lang, "referral_text", { link });
-  await bot.sendMessage(chatId, text, { disable_web_page_preview: true });
+
+  await bot.sendMessage(chatId, text, {
+    reply_markup: { inline_keyboard: [[{ text: "⬅️ Menu", callback_data: "back_menu" }]] }
+  });
 }

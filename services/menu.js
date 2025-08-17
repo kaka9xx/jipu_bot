@@ -3,16 +3,16 @@ export function getMainMenu(t, lang) {
     reply_markup: {
       inline_keyboard: [
         [
-          { text: "⚔️ " + t(lang, "farm"), callback_data: "farm" },
-          { text: "💎 " + t(lang, "balance"), callback_data: "balance" }
+          { text: "⚔️ Farm", callback_data: "farm" },
+          { text: "💰 Balance", callback_data: "balance" },
         ],
         [
-          { text: "👥 " + t(lang, "referral"), callback_data: "ref" },
-          { text: "🌐 " + t(lang, "lang"), callback_data: "lang" }
+          { text: "👥 Referral", callback_data: "ref" },
+          { text: "ℹ️ Help", callback_data: "help" },
         ],
         [
-          { text: "📜 " + t(lang, "about"), callback_data: "intro" },
-          { text: "❓ " + t(lang, "help"), callback_data: "help" }
+          { text: "🌐 Language", callback_data: "lang" },
+          { text: "📜 About JIPU", callback_data: "intro" },
         ]
       ]
     }
