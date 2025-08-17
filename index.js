@@ -81,3 +81,8 @@ app.get('/leaderboard', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🌐 Web server running on port ${PORT}`);
 });
+
+bot.on('message', (msg) => {
+  console.log('📩 Update từ Telegram:', msg);
+  handleLangChoice(bot, msg, t);
+});
