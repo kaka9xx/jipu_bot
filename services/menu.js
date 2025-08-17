@@ -1,25 +1,32 @@
-import fs from 'fs';
+// services/menu.js
 
-export function sendMainMenu(bot, chatId, t, userId) {
-  const dbPath = './database/users.json';
-  let db = {};
-  if (fs.existsSync(dbPath)) db = JSON.parse(fs.readFileSync(dbPath));
-  const lang = db[userId + '_lang'] || 'vi';
-
-  bot.sendMessage(chatId, t(lang, 'start'), {
+export function getMainMenu(t, lang) {
+  return {
     reply_markup: {
       inline_keyboard: [
         [
-          { text: "⚔️ Farm", callback_data: "farm" },
-          { text: "💰 Balance", callback_data: "balance" },
-          { text: "👥 Referral", callback_data: "ref" }
+          { text: "⚔️ " + t(lang, "menu_farm"), callback_data: "farm" },
+          { text: "💰 " + t(lang, "menu_balance"), callback_data: "balance" }
         ],
         [
-          { text: "ℹ️ Help", callback_data: "help" },
-          { text: "🌍 Language", callback_data: "lang" }
+          { text: "👥 " + t(lang, "menu_ref"), callback_data: "ref" },
+          { text: "ℹ️ " + t(lang, "menu_help"), callback_data: "help" }
+        ],
+        [
+          { text: "🌐 " + t(lang, "menu_lang"), callback_data: "lang" },
+          { text: "📜 " + t(lang, "menu_intro"), callback_data: "intro" }
         ]
       ]
-    },
-    parse_mode: "Markdown"
-  });
+    }
+  };
+}
+
+export function backToMenuButton(t, lang) {
+  return {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "⬅️ " + t(lang, "back_menu"), callback_data: "back_menu" }]
+      ]
+    }
+  };
 }

@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { sendMainMenu } from './menu.js';
+import { backToMenuButton } from "./menu.js";
 
 export function handleFarm(bot, msg, t) {
   const dbPath = './database/users.json';
@@ -15,4 +16,14 @@ export function handleFarm(bot, msg, t) {
 
   bot.sendMessage(chatId, t(lang, 'farm'));
   sendMainMenu(bot, chatId, t, userId);
+}
+
+// services/farm.js
+
+export function handleFarm(bot, msg, t, lang) {
+  bot.sendMessage(
+    msg.chat.id,
+    t(lang, "farm_result") || "⚔️ Bạn vừa farm xong, sức mạnh JIPU tăng lên!",
+    backToMenuButton(t, lang)
+  );
 }

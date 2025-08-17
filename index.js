@@ -1,68 +1,105 @@
-import express from 'express';
-import TelegramBot from 'node-telegram-bot-api';
-import fs from 'fs';
-import dotenv from 'dotenv';
+import TelegramBot from "node-telegram-bot-api";
+import express from "express";
+import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import fs from "fs";
 
-import { handleFarm } from './services/farm.js';
-import { handleReferral } from './services/referral.js';
-import { handleBalance } from './services/balance.js';
-import { handleHelp } from './services/help.js';
-import { handleLang, handleLangChoice } from './services/lang.js';
-import { sendMainMenu } from './services/menu.js';
+import { getMainMenu } from "./services/menu.js";
+import { handleFarm } from "./services/farm.js";
+import { handleBalance } from "./services/balance.js";
+import { handleReferral } from "./services/referral.js";
+import { handleHelp } from "./services/help.js";
+import { handleLang, handleLangChoice } from "./services/lang.js";
 
 dotenv.config();
 
 const TOKEN = process.env.BOT_TOKEN;
-const WEB_URL = process.env.WEB_URL; // VD: https://jipu-bot.onrender.com
+const URL = process.env.RENDER_EXTERNAL_URL || `https://your-app.onrender.com`;
 const PORT = process.env.PORT || 10000;
 
-// load ngôn ngữ
-const langFile = JSON.parse(fs.readFileSync('./lang.json','utf8'));
+// Load lang.json
+const langFile = JSON.parse(fs.readFileSync("./lang.json", "utf8"));
 function t(lang, key, vars = {}) {
-  let text = langFile[lang]?.[key] || '';
-  for (const [k,v] of Object.entries(vars)) {
+  let text = langFile[lang]?.[key] || langFile["en"]?.[key] || "";
+  for (const [k, v] of Object.entries(vars)) {
     text = text.replace(`{${k}}`, v);
   }
   return text;
 }
 
-// Bot webhook
-const bot = new TelegramBot(TOKEN, { webHook: true });
-bot.setWebHook(`${WEB_URL}/bot${TOKEN}`);
+// DB đọc/ghi lang
+const dbFile = "./database/users.json";
+function readDB() {
+  try {
+    return JSON.parse(fs.readFileSync(dbFile, "utf8"));
+  } catch {
+    return {};
+  }
+}
 
+// Init bot
+const bot = new TelegramBot(TOKEN, { polling: false });
+
+// Express app
 const app = express();
-app.use(express.json());
+app.use(bodyParser.json());
 
-// endpoint webhook
-app.post(`/bot${TOKEN}`, (req,res) => {
+// Webhook route
+app.post(`/bot${TOKEN}`, (req, res) => {
   bot.processUpdate(req.body);
   res.sendStatus(200);
 });
 
-// command /start
+// Start server
+app.listen(PORT, async () => {
+  console.log(`🌐 Server running on port ${PORT}`);
+  try {
+    await bot.setWebHook(`${URL}/bot${TOKEN}`);
+    console.log("✅ Webhook set:", `${URL}/bot${TOKEN}`);
+  } catch (err) {
+    console.error("❌ Error setting webhook:", err.message);
+  }
+});
+
+// Commands & callbacks
 bot.onText(/\/start/, (msg) => {
-  sendMainMenu(bot, msg.chat.id, t, msg.from.id);
+  const db = readDB();
+  const lang = db[msg.from.id + "_lang"] || "vi";
+  bot.sendMessage(msg.chat.id, t(lang, "start"), getMainMenu(t, lang));
 });
 
-// xử lý nút menu
-bot.on('callback_query', (query) => {
-  const chatId = query.message.chat.id;
-  const userId = query.from.id;
+bot.on("callback_query", (query) => {
+  const db = readDB();
+  const lang = db[query.from.id + "_lang"] || "vi";
+  const msg = query.message;
 
-  if (query.data === "farm") handleFarm(bot, query.message, t);
-  if (query.data === "balance") handleBalance(bot, query.message, t);
-  if (query.data === "ref") handleReferral(bot, query.message, t);
-  if (query.data === "help") handleHelp(bot, query.message, t);
-  if (query.data === "lang") handleLang(bot, query.message, t);
-  if (query.data.startsWith("set_lang")) handleLangChoice(bot, query, t);
-  if (query.data === "back_menu") sendMainMenu(bot, chatId, t, userId);
-
-  bot.answerCallbackQuery(query.id).catch(()=>{});
-});
-
-// chạy server web (Render cần)
-app.get('/', (req,res) => res.send('🤖 JIPU Bot running...'));
-
-app.listen(PORT, () => {
-  console.log(`🌐 Web server running on port ${PORT}`);
+  switch (query.data) {
+    case "farm":
+      handleFarm(bot, msg, t, lang);
+      break;
+    case "balance":
+      handleBalance(bot, msg, t, lang);
+      break;
+    case "ref":
+      handleReferral(bot, msg, t, lang);
+      break;
+    case "help":
+      handleHelp(bot, msg, t, lang);
+      break;
+    case "lang":
+      handleLang(bot, msg, t, lang);
+      break;
+    case "set_lang_vi":
+    case "set_lang_en":
+      handleLangChoice(bot, query, t);
+      break;
+    case "intro":
+      bot.sendMessage(msg.chat.id, t(lang, "start"), getMainMenu(t, lang));
+      break;
+    case "back_menu":
+      bot.sendMessage(msg.chat.id, t(lang, "choose_next"), getMainMenu(t, lang));
+      break;
+    default:
+      bot.answerCallbackQuery(query.id, { text: "⚠️ Unknown command" });
+  }
 });
