@@ -19,5 +19,9 @@
   },
   "engines": {
     "node": ">=18 <23"
+  },
+  "resolutions": {
+    "form-data": "^4.0.0",
+    "tough-cookie": "^4.1.3"
   }
 }
