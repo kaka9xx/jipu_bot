@@ -1,13 +1,12 @@
 import fs from 'fs';
-const DB_PATH = './database/users.json';
 
-export async function farmCoins(userId) {
-  const db = JSON.parse(fs.readFileSync(DB_PATH));
-  if (!db[userId]) {
-    db[userId] = 0;
-  }
-  const earned = 10;
-  db[userId] += earned;
-  fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2));
-  return { earned, total: db[userId] };
+export function handleFarm(bot, msg, t) {
+  const db = JSON.parse(fs.readFileSync('./database/users.json'));
+  if (!db[msg.from.id]) db[msg.from.id] = 0;
+  db[msg.from.id] += 10; // farm 10 energy
+  fs.writeFileSync('./database/users.json', JSON.stringify(db, null, 2));
+
+  const lang = db[msg.from.id + '_lang'] || 'vi';
+  const reply = t(lang, 'farm_success', { EARNED: 10, TOTAL: db[msg.from.id] });
+  bot.sendMessage(msg.chat.id, reply);
 }
