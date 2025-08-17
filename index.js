@@ -11,20 +11,36 @@ import { handleLang, handleLangChoice } from './services/lang.js';
 
 dotenv.config();
 
-// Load lang.json
+// --- Load language file ---
 const langFile = JSON.parse(fs.readFileSync('./lang.json','utf8'));
 function t(lang, key, vars = {}) {
   let text = langFile[lang][key] || '';
-  for (const [k,v] of Object.entries(vars)) {
+  for (const [k, v] of Object.entries(vars)) {
     text = text.replace(`{${k}}`, v);
   }
   return text;
 }
 
-// Init Telegram Bot
-const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
+// --- Express App ---
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Commands
+// --- Telegram Bot (Webhook mode) ---
+const bot = new TelegramBot(process.env.BOT_TOKEN);
+
+// URL public mà Render cấp cho bạn (vd: https://your-service.onrender.com)
+const url = process.env.RENDER_EXTERNAL_URL || `https://your-app.onrender.com`;
+
+// Đăng ký webhook
+bot.setWebHook(`${url}/bot${process.env.BOT_TOKEN}`);
+
+// Route nhận update từ Telegram
+app.post(`/bot${process.env.BOT_TOKEN}`, express.json(), (req, res) => {
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
+});
+
+// --- Commands ---
 bot.onText(/\/start/, (msg) => {
   const db = JSON.parse(fs.readFileSync('./database/users.json'));
   const lang = db[msg.from.id + '_lang'] || 'vi';
@@ -40,22 +56,17 @@ bot.onText(/\/lang/, (msg) => handleLang(bot, msg, t));
 // Catch language selection
 bot.on('message', (msg) => handleLangChoice(bot, msg, t));
 
-// --- Express Web Server ---
-const app = express();
-const PORT = process.env.PORT || 3000;
-
+// --- Extra Web Routes ---
 app.get('/', (req, res) => {
-  res.send('<h2>🤖 JIPU Bot is running!</h2><p>Check <a href="/leaderboard">/leaderboard</a></p>');
+  res.send('<h2>🤖 JIPU Bot (Webhook mode) is running!</h2><p>Try /leaderboard</p>');
 });
 
-// API: get balance
 app.get('/balance/:id', (req, res) => {
   const db = JSON.parse(fs.readFileSync('./database/users.json'));
   const total = db[req.params.id] || 0;
   res.json({ user: req.params.id, balance: total });
 });
 
-// API: leaderboard JSON
 app.get('/leaderboard', (req, res) => {
   const db = JSON.parse(fs.readFileSync('./database/users.json'));
   const users = Object.entries(db)
@@ -66,6 +77,7 @@ app.get('/leaderboard', (req, res) => {
   res.json(users);
 });
 
+// --- Start server ---
 app.listen(PORT, () => {
   console.log(`🌐 Web server running on port ${PORT}`);
 });

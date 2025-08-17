@@ -1,5 +1,5 @@
 {
-  "name": "jipu_bot",
+  "name": "jipu-bot",
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",
@@ -12,3 +12,4 @@
     "express": "^4.19.2"
   }
 }
+
