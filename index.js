@@ -36,18 +36,22 @@ app.post(`/bot${process.env.BOT_TOKEN}`, express.json(), (req, res) => {
   res.sendStatus(200);
 });
 
-// --- Helper: render Main Menu ---
+// Helper: render Main Menu
 function sendMainMenu(bot, chatId, lang) {
   const intro = t(lang, 'start');
   bot.sendMessage(chatId, intro, {
     parse_mode: 'Markdown',
     reply_markup: {
       inline_keyboard: [
-        [{ text: "⚔️ Farm", callback_data: "farm" }],
-        [{ text: "💰 Balance", callback_data: "balance" }],
-        [{ text: "👥 Referral", callback_data: "ref" }],
-        [{ text: "🌍 Language", callback_data: "lang" }],
-        [{ text: "ℹ️ Help", callback_data: "help" }]
+        [
+          { text: "⚔️ Farm", callback_data: "farm" },
+          { text: "💰 Balance", callback_data: "balance" },
+          { text: "👥 Referral", callback_data: "ref" }
+        ],
+        [
+          { text: "🌍 Language", callback_data: "lang" },
+          { text: "ℹ️ Help", callback_data: "help" }
+        ]
       ]
     }
   });
@@ -69,31 +73,31 @@ bot.onText(/\/lang/, (msg) => handleLang(bot, msg, t));
 // --- Catch language selection ---
 bot.on('message', (msg) => handleLangChoice(bot, msg, t));
 
-// --- Handle menu button clicks ---
+// Handle menu button clicks
 bot.on('callback_query', (query) => {
-  const msg = query.message;
+  const chatId = query.message.chat.id;
   const userId = query.from.id;
   const db = JSON.parse(fs.readFileSync('./database/users.json'));
   const lang = db[userId + '_lang'] || 'vi';
 
   switch (query.data) {
     case 'farm':
-      handleFarm(bot, msg, t);
+      handleFarm(bot, { chat: { id: chatId }, from: query.from }, t);
       break;
     case 'balance':
-      handleBalance(bot, msg, t);
+      handleBalance(bot, { chat: { id: chatId }, from: query.from }, t);
       break;
     case 'ref':
-      handleReferral(bot, msg, t);
+      handleReferral(bot, { chat: { id: chatId }, from: query.from }, t);
       break;
     case 'lang':
-      handleLang(bot, msg, t);
+      handleLang(bot, { chat: { id: chatId }, from: query.from }, t);
       break;
     case 'help':
-      handleHelp(bot, msg, t);
+      handleHelp(bot, { chat: { id: chatId }, from: query.from }, t);
       break;
     case 'back_menu':
-      sendMainMenu(bot, msg.chat.id, lang);
+      sendMainMenu(bot, chatId, lang);
       break;
   }
 
