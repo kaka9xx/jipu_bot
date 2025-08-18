@@ -1,9 +1,6 @@
 import fs from "fs";
-import path from "path";
+const langs = JSON.parse(fs.readFileSync("./lang.json"));
 
-const file = path.resolve("src/utils/lang.json");
-const data = JSON.parse(fs.readFileSync(file, "utf-8"));
-
-export function getText(lang = "vi") {
-  return data[lang] || data["vi"];
+export function getText(lang) {
+  return langs[lang] || langs["en"];
 }

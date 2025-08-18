@@ -8,14 +8,16 @@ import { getText } from "./src/utils/lang.js";
 import { findUser, addUser, updateUser } from "./src/utils/db.js";
 
 dotenv.config();
+
 const app = express();
 app.use(bodyParser.json());
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const BOT_USERNAME = process.env.BOT_USERNAME;
+const BASE_URL = process.env.BASE_URL;
+
 const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
-// gọi API Telegram
 async function sendMessage(chat_id, text, keyboard = null) {
   const payload = {
     chat_id,
@@ -29,7 +31,6 @@ async function sendMessage(chat_id, text, keyboard = null) {
   });
 }
 
-// webhook endpoint
 app.post("/webhook", async (req, res) => {
   const msg = req.body.message;
   if (!msg) return res.sendStatus(200);
@@ -38,7 +39,6 @@ app.post("/webhook", async (req, res) => {
   const text = msg.text;
   const { id, first_name, username } = msg.from;
 
-  // lấy user từ DB hoặc tạo mới
   let user = findUser(id);
   if (!user) {
     user = addUser({
@@ -87,9 +87,8 @@ app.post("/webhook", async (req, res) => {
   res.sendStatus(200);
 });
 
-// chạy server
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`🌐 Server chạy cổng ${PORT}`);
-  console.log(`🔗 Webhook: ${process.env.WEBHOOK_URL}/webhook`);
+  console.log(`🔗 Webhook URL: ${BASE_URL}/webhook`);
 });
