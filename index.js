@@ -2,9 +2,9 @@ import express from "express";
 import bodyParser from "body-parser";
 import fetch from "node-fetch";
 
-import { mainMenu } from "./src/utils/menu.js";
-import { getText } from "./src/utils/lang.js";
-import { findUser, addUser, updateUser } from "./src/utils/db.js";
+import { mainMenu } from "./utils/menu.js";
+import { getText } from "./utils/lang.js";
+import { findUser, addUser, updateUser } from "./utils/db.js";
 
 const app = express();
 app.use(bodyParser.json());

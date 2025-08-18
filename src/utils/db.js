@@ -1,5 +1,5 @@
 import fs from "fs";
-const DB_PATH = "./src/data/users.json";
+const DB_PATH = "./data/users.json";
 
 export function findUser(id) {
   const users = JSON.parse(fs.readFileSync(DB_PATH));
