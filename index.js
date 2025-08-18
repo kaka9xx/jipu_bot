@@ -10,9 +10,11 @@ const app = express();
 app.use(bodyParser.json());
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const WEBHOOK_URL = process.env.WEBHOOK_URL;
+const BOT_USERNAME = process.env.BOT_USERNAME; // jipu_farm_bot
+const BASE_URL = process.env.BASE_URL || "https://jipu-bot.onrender.com";
 
 const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
+const WEBHOOK_URL = `${BASE_URL}/webhook/${BOT_TOKEN}`;
 
 // gọi API Telegram
 async function sendMessage(chat_id, text, keyboard = null) {
@@ -64,7 +66,7 @@ app.post(`/webhook/${BOT_TOKEN}`, async (req, res) => {
   } else if (text === "💰 Balance") {
     await sendMessage(chatId, `${lang.balance}: ${user.balance} 💰`, [[{ text: "⬅️" }]]);
   } else if (text === "👥 Referral") {
-    const refLink = `https://t.me/${process.env.BOT_USERNAME}?start=${user.referral_code}`;
+    const refLink = `https://t.me/${BOT_USERNAME}?start=${user.referral_code}`;
     await sendMessage(chatId, `${lang.referral}: ${refLink}`, [[{ text: "⬅️" }]]);
   } else if (text === "❓ Help") {
     await sendMessage(chatId, lang.help, [[{ text: "⬅️" }]]);
@@ -86,7 +88,14 @@ app.post(`/webhook/${BOT_TOKEN}`, async (req, res) => {
   res.sendStatus(200);
 });
 
-app.listen(10000, () => {
+app.listen(10000, async () => {
   console.log(`🌐 Server chạy cổng 10000`);
-  console.log(`🔗 Webhook: ${WEBHOOK_URL}/webhook/${BOT_TOKEN}`);
+  console.log(`🔗 Webhook: ${WEBHOOK_URL}`);
+
+  // set webhook cho Telegram
+  await fetch(`${TELEGRAM_API}/setWebhook`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url: WEBHOOK_URL }),
+  });
 });
