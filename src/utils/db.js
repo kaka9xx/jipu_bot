@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-const DB_PATH = path.resolve("./src/data/users.json");
+const DB_PATH = path.resolve("src/data/users.json");
 
 function ensureDB() {
   if (!fs.existsSync(DB_PATH)) {
@@ -11,8 +11,7 @@ function ensureDB() {
 
 export function loadUsers() {
   ensureDB();
-  const data = fs.readFileSync(DB_PATH, "utf8");
-  return JSON.parse(data);
+  return JSON.parse(fs.readFileSync(DB_PATH, "utf8"));
 }
 
 export function saveUsers(users) {
@@ -20,8 +19,7 @@ export function saveUsers(users) {
 }
 
 export function findUser(user_id) {
-  const users = loadUsers();
-  return users.find(u => u.user_id === user_id);
+  return loadUsers().find(u => u.user_id === user_id);
 }
 
 export function addUser(user) {

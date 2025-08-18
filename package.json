@@ -1,10 +1,24 @@
 {
-  "name": "jipu_bot",
+  "name": "jipu-bot",
   "version": "1.1.0",
+  "description": "Telegram farming bot JIPU v1.1.0",
   "main": "index.js",
   "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
   "dependencies": {
+    "body-parser": "^1.20.2",
     "express": "^4.19.2",
-    "node-telegram-bot-api": "^0.61.0"
-  }
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "JIPU",
+  "license": "MIT"
 }
