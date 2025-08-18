@@ -6,8 +6,8 @@ import { handleReferral } from "./services/referral.js";
 import { handleHelp } from "./services/help.js";
 import { handleIntro } from "./services/intro.js";
 import { handleLangMenu, handleLangSet } from "./services/lang.js";
-import { handleTest } from "./services/test.js";
 import { t } from "./utils/lang.js";
+
 
 // token bot Telegram
 const token = process.env.BOT_TOKEN;
@@ -60,10 +60,7 @@ bot.on("callback_query", async (query) => {
     case "back_menu":
       await bot.sendMessage(chatId, t(lang, "choose_next"), getMainMenu(t, lang));
       break;
-    case "test":
-      await handleTest(bot, chatId, lang, t);
-      break;
-    default:
+      default:
       await bot.sendMessage(chatId, "❌ Unknown action.");
   }
 
