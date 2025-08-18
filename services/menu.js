@@ -1,4 +1,3 @@
-// services/menu.js
 export function getMainMenu(t, lang) {
   return {
     reply_markup: {
@@ -12,8 +11,8 @@ export function getMainMenu(t, lang) {
           { text: "❓ " + t(lang, "help_btn"), callback_data: "help" }
         ],
         [
-          { text: "ℹ️ " + t(lang, "intro_btn"), callback_data: "intro" },
-          { text: "🌍 " + t(lang, "lang_btn"), callback_data: "lang" }
+          { text: "🌐 " + t(lang, "lang_btn"), callback_data: "lang" },
+          { text: "📜 " + t(lang, "about_btn"), callback_data: "intro" }
         ]
       ]
     }
