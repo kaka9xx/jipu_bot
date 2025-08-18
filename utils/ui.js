@@ -5,7 +5,7 @@ export function backMenuKeyboard(lang, t) {
   return {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "⬅️ " + t(lang, "back_menu"), callback_data: "back_menu" }]
+        [{ text: t(lang, "back_menu"), callback_data: "back_menu" }]
       ]
     }
   };
@@ -18,8 +18,8 @@ export function actionKeyboard(type, lang, t) {
   return {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "🔄 " + t(lang, "refresh"), callback_data: refreshCb }],
-        [{ text: "⬅️ " + t(lang, "back_menu"), callback_data: "back_menu" }]
+        [{ text: t(lang, "refresh"), callback_data: refreshCb }],
+        [{ text: t(lang, "back_menu"), callback_data: "back_menu" }]
       ]
     }
   };

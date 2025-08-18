@@ -11,7 +11,7 @@ export async function showLangMenu(bot, chatId, t) {
           { text: "🇻🇳 Tiếng Việt", callback_data: "set_lang:vi" },
           { text: "🇬🇧 English", callback_data: "set_lang:en" }
         ],
-        [{ text: "⬅️ " + t("vi", "back_menu"), callback_data: "back_menu" }]
+        [{ text: t("vi", "back_menu"), callback_data: "back_menu" }]
       ]
     }
   });
