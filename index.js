@@ -1,23 +1,19 @@
 import express from "express";
 import bodyParser from "body-parser";
 import fetch from "node-fetch";
-import dotenv from "dotenv";
 
 import { mainMenu } from "./src/utils/menu.js";
 import { getText } from "./src/utils/lang.js";
 import { findUser, addUser, updateUser } from "./src/utils/db.js";
 
-dotenv.config();
-
 const app = express();
 app.use(bodyParser.json());
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const BOT_USERNAME = process.env.BOT_USERNAME;
 const BASE_URL = process.env.BASE_URL;
-
 const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
+// gửi tin nhắn Telegram
 async function sendMessage(chat_id, text, keyboard = null) {
   const payload = {
     chat_id,
@@ -31,7 +27,8 @@ async function sendMessage(chat_id, text, keyboard = null) {
   });
 }
 
-app.post("/webhook", async (req, res) => {
+// webhook endpoint
+app.post(`/webhook/${BOT_TOKEN}`, async (req, res) => {
   const msg = req.body.message;
   if (!msg) return res.sendStatus(200);
 
@@ -56,7 +53,7 @@ app.post("/webhook", async (req, res) => {
 
   if (text === "/start") {
     await sendMessage(chatId, lang.start, mainMenu(lang));
-  } else if (text === lang.back) {
+  } else if (text === "⬅️") {
     await sendMessage(chatId, lang.start, mainMenu(lang));
   } else if (text === "🌾 Farm") {
     const reward = Math.floor(Math.random() * 10) + 1;
@@ -65,7 +62,7 @@ app.post("/webhook", async (req, res) => {
   } else if (text === "💰 Balance") {
     await sendMessage(chatId, `${lang.balance}: ${user.balance} 💰`, [[{ text: "⬅️" }]]);
   } else if (text === "👥 Referral") {
-    const refLink = `https://t.me/${BOT_USERNAME}?start=${user.referral_code}`;
+    const refLink = `https://t.me/${process.env.BOT_USERNAME}?start=${user.referral_code}`;
     await sendMessage(chatId, `${lang.referral}: ${refLink}`, [[{ text: "⬅️" }]]);
   } else if (text === "❓ Help") {
     await sendMessage(chatId, lang.help, [[{ text: "⬅️" }]]);
@@ -87,8 +84,19 @@ app.post("/webhook", async (req, res) => {
   res.sendStatus(200);
 });
 
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-  console.log(`🌐 Server chạy cổng ${PORT}`);
-  console.log(`🔗 Webhook URL: ${BASE_URL}/webhook`);
+// health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
+
+// self-ping để tránh sleep
+setInterval(() => {
+  if (BASE_URL) {
+    fetch(`${BASE_URL}/health`).then(() => console.log("🔄 Self-ping to prevent Render sleep"));
+  }
+}, 14 * 60 * 1000);
+
+app.listen(10000, () => {
+  console.log(`🌐 Server chạy cổng 10000`);
+  console.log(`🔗 Webhook: ${BASE_URL}/webhook/${BOT_TOKEN}`);
 });

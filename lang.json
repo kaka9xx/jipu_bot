@@ -1,20 +1,20 @@
 {
   "vi": {
-    "start": "Chào mừng bạn đến với Jipu Bot 🌟",
-    "farm": "Bạn đã farm thành công!",
+    "start": "👋 Chào mừng bạn đến với Jipu Bot!",
+    "farm": "Bạn đã farm được",
     "balance": "Số dư hiện tại",
-    "referral": "Mã giới thiệu của bạn",
-    "help": "Hướng dẫn sử dụng bot.",
-    "about": "Jipu Bot phiên bản 1.2",
+    "referral": "Link giới thiệu",
+    "help": "Hướng dẫn sử dụng bot",
+    "about": "Thông tin về bot",
     "lang_choose": "Chọn ngôn ngữ:"
   },
   "en": {
-    "start": "Welcome to Jipu Bot 🌟",
-    "farm": "You have farmed successfully!",
-    "balance": "Your current balance",
-    "referral": "Your referral code",
-    "help": "How to use the bot.",
-    "about": "Jipu Bot version 1.2",
-    "lang_choose": "Choose language:"
+    "start": "👋 Welcome to Jipu Bot!",
+    "farm": "You farmed",
+    "balance": "Your balance",
+    "referral": "Referral link",
+    "help": "Bot usage guide",
+    "about": "About this bot",
+    "lang_choose": "Choose a language:"
   }
 }
