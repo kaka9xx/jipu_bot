@@ -1,4 +1,3 @@
-// index.js
 import express from "express";
 import bodyParser from "body-parser";
 import fetch from "node-fetch";
@@ -16,36 +15,31 @@ const BOT_USERNAME = process.env.BOT_USERNAME;
 
 const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
-// Hàm gửi tin nhắn
+// Gửi tin nhắn tới Telegram
 async function sendMessage(chat_id, text, keyboard = null) {
-  try {
-    const payload = {
-      chat_id,
-      text,
-      reply_markup: keyboard ? { keyboard, resize_keyboard: true } : undefined,
-    };
-    await fetch(`${TELEGRAM_API}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-  } catch (e) {
-    console.error("❌ sendMessage error:", e.message);
-  }
+  const payload = {
+    chat_id,
+    text,
+    reply_markup: keyboard ? { keyboard, resize_keyboard: true } : undefined,
+  };
+  await fetch(`${TELEGRAM_API}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
 }
 
-// Webhook handler
-app.post(`/webhook/${BOT_TOKEN}`, async (req, res) => {
+// Webhook route (không còn BOT_TOKEN trong path)
+app.post("/webhook", async (req, res) => {
   try {
     const msg = req.body.message;
-    if (!msg) {
-      return res.status(200).send("ok");
-    }
+    if (!msg) return res.sendStatus(200);
 
     const chatId = msg.chat.id;
     const text = msg.text;
     const { id, first_name, username } = msg.from;
 
+    // lấy user từ DB hoặc tạo mới
     let user = findUser(id);
     if (!user) {
       user = addUser({
@@ -91,14 +85,26 @@ app.post(`/webhook/${BOT_TOKEN}`, async (req, res) => {
       await sendMessage(chatId, "✅ Language changed to English", mainMenu(getText("en")));
     }
 
-    res.status(200).send("ok"); // Đảm bảo luôn trả về 200
+    res.sendStatus(200);
   } catch (err) {
-    console.error("❌ Webhook error:", err.message);
-    res.status(200).send("ok");
+    console.error("❌ Webhook error:", err);
+    res.sendStatus(500);
   }
 });
 
-app.listen(10000, () => {
-  console.log(`🌐 Máy chủ chạy cổng 10000`);
-  console.log(`🔗 Webhook: ${WEBHOOK_URL}/webhook/${BOT_TOKEN}`);
+// Khi khởi động server, tự động set webhook
+app.listen(10000, async () => {
+  console.log(`🌐 Server chạy cổng 10000`);
+  console.log(`🔗 Webhook: ${WEBHOOK_URL}/webhook`);
+
+  try {
+    const resp = await fetch(`${TELEGRAM_API}/setWebhook`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: `${WEBHOOK_URL}/webhook` }),
+    });
+    console.log("Set webhook:", await resp.json());
+  } catch (e) {
+    console.error("❌ Lỗi set webhook:", e);
+  }
 });
