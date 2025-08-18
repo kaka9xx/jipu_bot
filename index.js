@@ -1,112 +1,149 @@
+import TelegramBot from "node-telegram-bot-api";
 import express from "express";
-import bodyParser from "body-parser";
 import dotenv from "dotenv";
 
 import {
+  getMainMenu,
   handleFarm,
   handleBalance,
   handleReferral,
   handleHelp,
   handleIntro,
   showLangMenu,
-  handleLangSet,
+  handleLangSet
 } from "./services/index.js";
 
-import { getUser, createUser } from "./utils/db.js";
-import { mainMenu } from "./utils/i18n.js";
+import { t } from "./utils/i18n.js";
 
 dotenv.config();
+
+// --- State ngôn ngữ theo user (in-memory) ---
+const userLang = new Map(); // userId -> "vi" | "en"
+const getLang = (userId) => userLang.get(userId) || "vi";
+
+// --- Khởi tạo bot ---
+const token = process.env.BOT_TOKEN;
+if (!token) {
+  throw new Error("⚠️ Missing BOT_TOKEN in .env");
+}
+
+// Nếu có RENDER_EXTERNAL_URL -> webhook; ngược lại polling (dev local)
+const USE_WEBHOOK = !!process.env.RENDER_EXTERNAL_URL;
+const bot = new TelegramBot(token, { webHook: USE_WEBHOOK });
+
+let BOT_USERNAME = "jipu_bot";
+bot.getMe().then((me) => {
+  BOT_USERNAME = me.username;
+  console.log("🤖 Bot username:", BOT_USERNAME);
+}).catch(() => {});
+
+// --- Express cho webhook (Render) ---
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 
-const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
+const PORT = process.env.PORT || 10000;
+const URL = process.env.RENDER_EXTERNAL_URL;
+const SECRET = process.env.SECRET_TOKEN;
 
-// ========== VERIFY WEBHOOK ==========
-app.get("/webhook", (req, res) => {
-  const mode = req.query["hub.mode"];
-  const token = req.query["hub.verify_token"];
-  const challenge = req.query["hub.challenge"];
+app.get("/", (req, res) => res.send("✅ JIPU Bot is running"));
 
-  if (mode === "subscribe" && token === VERIFY_TOKEN) {
-    console.log("WEBHOOK_VERIFIED");
-    res.status(200).send(challenge);
-  } else {
-    res.sendStatus(403);
+app.post(`/webhook/${token}`, (req, res) => {
+  // Bảo vệ secret (nếu cấu hình)
+  const incomingSecret = req.headers["x-telegram-bot-api-secret-token"];
+  if (SECRET && incomingSecret !== SECRET) {
+    console.log("🚨 Invalid secret token");
+    return res.sendStatus(403);
   }
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
 });
 
-// ========== HANDLE EVENTS ==========
-app.post("/webhook", async (req, res) => {
-  const body = req.body;
+app.listen(PORT, async () => {
+  console.log(`🌐 Server running on port ${PORT}`);
 
-  if (body.object === "page") {
-    for (const entry of body.entry) {
-      const webhookEvent = entry.messaging[0];
-      const senderId = webhookEvent.sender.id;
-      const messageText = webhookEvent.message?.text;
-
-      // Đăng ký user nếu chưa có
-      await createUser(senderId);
-
-      if (messageText) {
-        let reply;
-
-        switch (messageText) {
-          case "/start":
-            reply = { text: await mainMenu(senderId, "start"), menu: ["🌾 Farm", "💰 Balance", "👥 Referral", "❓ Help", "🌐 Language", "📜 About"] };
-            break;
-
-          case "🌾 Farm":
-            reply = await handleFarm(senderId);
-            break;
-
-          case "💰 Balance":
-            reply = await handleBalance(senderId);
-            break;
-
-          case "👥 Referral":
-            reply = await handleReferral(senderId);
-            break;
-
-          case "❓ Help":
-            reply = await handleHelp(senderId);
-            break;
-
-          case "📜 About":
-            reply = await handleIntro(senderId);
-            break;
-
-          case "🌐 Language":
-            reply = await showLangMenu();
-            break;
-
-          case "🇻🇳":
-            reply = await handleLangSet(senderId, "vi");
-            break;
-
-          case "🇬🇧":
-            reply = await handleLangSet(senderId, "en");
-            break;
-
-          case "⬅️":
-            reply = { text: await mainMenu(senderId, "menu"), menu: ["🌾 Farm", "💰 Balance", "👥 Referral", "❓ Help", "🌐 Language", "📜 About"] };
-            break;
-
-          default:
-            reply = { text: "❓ Không hiểu lệnh, gõ /start để bắt đầu.", menu: ["⬅️"] };
-        }
-
-        console.log("👉 Reply:", reply);
-        // TODO: gửi reply về Messenger bằng Send API
-      }
+  if (USE_WEBHOOK) {
+    if (!URL) {
+      console.warn("⚠️ Missing RENDER_EXTERNAL_URL; webhook cannot be set.");
+    } else {
+      await bot.setWebHook(`${URL}/webhook/${token}`, {
+        secret_token: SECRET
+      });
+      console.log("🔗 Webhook set:", `${URL}/webhook/${token}`);
     }
-
-    res.status(200).send("EVENT_RECEIVED");
   } else {
-    res.sendStatus(404);
+    // Fallback polling nếu không dùng webhook
+    console.log("📡 Starting bot in polling mode (dev/local)...");
+    bot.startPolling();
   }
 });
 
-// ========== START SERVER ==========
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Server chạy tại http://localhost:${PORT}`));
+// ================== COMMANDS ==================
+
+// /start <optional_ref>
+bot.onText(/\/start(?:\s+(\S+))?/, async (msg, match) => {
+  const chatId = msg.chat.id;
+  const userId = msg.from.id;
+  const refCode = match?.[1];
+
+  // set mặc định VI nếu chưa có
+  if (!userLang.has(userId)) userLang.set(userId, "vi");
+  const lang = getLang(userId);
+
+  // Lời chào + Menu chính
+  await bot.sendMessage(chatId, `${t(lang, "start")}\n\n${t(lang, "choose_next")}`, getMainMenu(t, lang));
+});
+
+// /lang
+bot.onText(/\/lang/, async (msg) => {
+  await showLangMenu(bot, msg.chat.id, t);
+});
+
+// /help
+bot.onText(/\/help/, async (msg) => {
+  const lang = getLang(msg.from.id);
+  await handleHelp(bot, msg.chat.id, t, lang);
+  await bot.sendMessage(msg.chat.id, t(lang, "choose_next"), getMainMenu(t, lang));
+});
+
+// ================== CALLBACKS ==================
+bot.on("callback_query", async (q) => {
+  const chatId = q.message.chat.id;
+  const userId = q.from.id;
+  const lang = getLang(userId);
+
+  try {
+    switch (q.data) {
+      case "farm":
+        await handleFarm(bot, chatId, userId, t, lang);
+        break;
+      case "balance":
+        await handleBalance(bot, chatId, userId, t, lang);
+        break;
+      case "ref":
+        await handleReferral(bot, chatId, userId, t, lang, BOT_USERNAME);
+        break;
+      case "help":
+        await handleHelp(bot, chatId, t, lang);
+        break;
+      case "intro":
+        await handleIntro(bot, chatId, t, lang);
+        break;
+      case "lang":
+        await showLangMenu(bot, chatId, t);
+        break;
+      case "back_menu":
+        await bot.sendMessage(chatId, t(lang, "choose_next"), getMainMenu(t, lang));
+        break;
+      default:
+        if (q.data.startsWith("set_lang:")) {
+          const newLang = q.data.split(":")[1];
+          userLang.set(userId, newLang);
+          await handleLangSet(bot, chatId, newLang, t);
+          // Gợi ý quay lại menu
+          await bot.sendMessage(chatId, t(newLang, "choose_next"), getMainMenu(t, newLang));
+        }
+    }
+  } finally {
+    bot.answerCallbackQuery(q.id).catch(() => {});
+  }
+});
