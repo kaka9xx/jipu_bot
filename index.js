@@ -12,8 +12,11 @@ import {
   showLangMenu,
   handleLangSet
 } from "./services/index.js";
+import { registerOrUpdateUser } from "./services/user.js";
 
 import { t } from "./utils/i18n.js";
+
+
 
 dotenv.config();
 
@@ -88,6 +91,15 @@ bot.onText(/\/start(?:\s+(\S+))?/, async (msg, match) => {
   // set mặc định VI nếu chưa có
   if (!userLang.has(userId)) userLang.set(userId, "vi");
   const lang = getLang(userId);
+
+  // ... chào User
+if (text === "/start") {
+  const user = registerOrUpdateUser(msg.from);
+
+  bot.sendMessage(chatId, `Xin chào ${user.first_name}! 👋\nWelcome to JIPU Bot.`, {
+    reply_markup: { keyboard: mainMenu, resize_keyboard: true }
+  });
+}
 
   // Lời chào + Menu chính
   await bot.sendMessage(chatId, `${t(lang, "start")}\n\n${t(lang, "choose_next")}`, getMainMenu(t, lang));
