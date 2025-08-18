@@ -1,6 +1,6 @@
-// services/intro.js
-import { backMenuKeyboard } from "../utils/ui.js";
+import { mainMenu } from "../utils/i18n.js";
 
-export async function handleIntro(bot, chatId, t, lang) {
-  await bot.sendMessage(chatId, t(lang, "about_text"), backMenuKeyboard(lang, t));
+export async function handleIntro(userId) {
+  const text = await mainMenu(userId, "intro");
+  return { text, menu: ["⬅️"] };
 }

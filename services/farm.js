@@ -1,17 +1,9 @@
-export async function handleFarm(bot, chatId, userId, t, lang) {
-  // Mock: mỗi lần farm +10 điểm
-  const gain = 10;
-  const balance = Math.floor(Math.random() * 100) + gain;
+import { addBalance, getUser } from "../utils/db.js";
+import { mainMenu } from "../utils/i18n.js";
 
-  await bot.sendMessage(
-    chatId,
-    t(lang, "farm_ok", { gain, balance }),
-    {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "⬅️ " + t(lang, "back_menu"), callback_data: "back_menu" }]
-        ]
-      }
-    }
-  );
+export async function handleFarm(userId) {
+  const amount = Math.floor(Math.random() * 10) + 1;
+  await addBalance(userId, amount);
+  const text = (await mainMenu(userId, "farm")).replace("{amount}", amount);
+  return { text, menu: ["⬅️"] };
 }

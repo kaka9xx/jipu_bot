@@ -1,16 +1,8 @@
-export async function handleBalance(bot, chatId, userId, t, lang) {
-  // Mock: trả số dư ngẫu nhiên
-  const balance = Math.floor(Math.random() * 500);
+import { getUser } from "../utils/db.js";
+import { mainMenu } from "../utils/i18n.js";
 
-  await bot.sendMessage(
-    chatId,
-    t(lang, "balance_text", { balance }),
-    {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "⬅️ " + t(lang, "back_menu"), callback_data: "back_menu" }]
-        ]
-      }
-    }
-  );
+export async function handleBalance(userId) {
+  const user = await getUser(userId);
+  const text = (await mainMenu(userId, "balance")).replace("{balance}", user?.balance || 0);
+  return { text, menu: ["⬅️"] };
 }
