@@ -1,97 +1,80 @@
 import express from "express";
-import TelegramBot from "node-telegram-bot-api";
-import { handleFarm } from "./src/services/farm.js";
-import { handleBalance } from "./src/services/balance.js";
-import { handleReferral } from "./src/services/referral.js";
-import { handleHelp } from "./src/services/help.js";
-import { handleAbout } from "./src/services/about.js";
-import { handleLanguage, handleLangSwitch } from "./src/services/language.js";
-import { addUser, findUser } from "./src/utils/db.js";
-import { getText } from "./src/utils/lang.js";
-
-const TOKEN = process.env.BOT_TOKEN;
-const PORT = process.env.PORT || 10000;
-
-const bot = new TelegramBot(TOKEN, { polling: true });
-
-function mainMenu(lang = "vi") {
-  return {
-    reply_markup: {
-      keyboard: [
-        [{ text: getText("farm", lang) }, { text: getText("balance", lang) }],
-        [{ text: getText("referral", lang) }, { text: getText("help", lang) }],
-        [{ text: getText("language", lang) }, { text: getText("about", lang) }]
-      ],
-      resize_keyboard: true
-    }
-  };
-}
-
-bot.onText(/\/start/, (msg) => {
-  const { id, first_name, username } = msg.from;
-  let user = findUser(id);
-
-  if (!user) {
-    user = addUser({
-      user_id: id,
-      first_name,
-      username,
-      balance: 0,
-      lang: "vi",
-      referral_code: `REF${id}`,
-      created_at: new Date().toISOString()
-    });
-  }
-
-  const text = getText("start", user.lang);
-  bot.sendMessage(id, text, mainMenu(user.lang));
-});
-
-bot.on("message", (msg) => {
-  const { id } = msg.chat;
-  const user = findUser(id) || { lang: "vi" };
-  const lang = user.lang;
-
-  switch (msg.text) {
-    case "🌾 Farm":
-    case "🌾 Nông trại":
-      handleFarm(bot, msg, user);
-      break;
-    case "💰 Balance":
-    case "💰 Số dư":
-      handleBalance(bot, msg, user);
-      break;
-    case "👥 Referral":
-    case "👥 Giới thiệu":
-      handleReferral(bot, msg, user);
-      break;
-    case "❓ Help":
-    case "❓ Trợ giúp":
-      handleHelp(bot, msg, lang);
-      break;
-    case "📜 About":
-    case "📜 Giới thiệu":
-      handleAbout(bot, msg, lang);
-      break;
-    case "🌐 Language":
-    case "🌐 Ngôn ngữ":
-      handleLanguage(bot, msg);
-      break;
-    case "🇻🇳 Tiếng Việt":
-      handleLangSwitch(bot, msg, "vi");
-      break;
-    case "🇬🇧 English":
-      handleLangSwitch(bot, msg, "en");
-      break;
-    default:
-      break;
-  }
-});
+import { Telegraf } from "telegraf";
+import { handleStart } from "./services/start.js";
+import { handleLanguage, setLanguage } from "./services/lang.js";
+import { getText } from "./utils/lang.js";
+import { mainMenu } from "./services/menu.js";
+import { findUser } from "./utils/db.js";
 
 const app = express();
-app.get("/", (req, res) => {
-  res.send("JIPU Bot v1.1.0 is running 🚀");
+
+const BOT_TOKEN = process.env.BOT_TOKEN;
+const PORT = process.env.PORT || 10000;
+
+if (!BOT_TOKEN) {
+  throw new Error("❌ Missing BOT_TOKEN in environment variables");
+}
+
+const bot = new Telegraf(BOT_TOKEN);
+
+// --- Commands ---
+bot.start((ctx) => handleStart(ctx));
+
+// --- Menu buttons ---
+bot.hears("🌾 Farm", (ctx) => {
+  const user = findUser(ctx.from.id);
+  const lang = user?.lang || "vi";
+  ctx.reply(getText("farm", lang), {
+    reply_markup: { keyboard: [[{ text: "⬅️ Về menu" }]], resize_keyboard: true }
+  });
 });
+
+bot.hears("💰 Balance", (ctx) => {
+  const user = findUser(ctx.from.id);
+  const lang = user?.lang || "vi";
+  ctx.reply(getText("balance", lang) + `: ${Math.floor(Math.random() * 1000)}💎`, {
+    reply_markup: { keyboard: [[{ text: "⬅️ Về menu" }]], resize_keyboard: true }
+  });
+});
+
+bot.hears("👥 Referral", (ctx) => {
+  const user = findUser(ctx.from.id);
+  const lang = user?.lang || "vi";
+  const refLink = `https://t.me/${ctx.botInfo.username}?start=${user.id}`;
+  ctx.reply(getText("referral", lang) + `\n${refLink}`, {
+    reply_markup: { keyboard: [[{ text: "⬅️ Về menu" }]], resize_keyboard: true }
+  });
+});
+
+bot.hears("❓ Help", (ctx) => {
+  const user = findUser(ctx.from.id);
+  const lang = user?.lang || "vi";
+  ctx.reply(getText("help", lang), {
+    reply_markup: { keyboard: [[{ text: "⬅️ Về menu" }]], resize_keyboard: true }
+  });
+});
+
+bot.hears("🌐 Language", (ctx) => handleLanguage(ctx));
+
+bot.hears("🇻🇳 Tiếng Việt", (ctx) => setLanguage(ctx, "vi"));
+bot.hears("🇬🇧 English", (ctx) => setLanguage(ctx, "en"));
+
+bot.hears("📜 About", (ctx) => {
+  const user = findUser(ctx.from.id);
+  const lang = user?.lang || "vi";
+  ctx.reply(getText("about", lang), {
+    reply_markup: { keyboard: [[{ text: "⬅️ Về menu" }]], resize_keyboard: true }
+  });
+});
+
+// --- Back to main menu ---
+bot.hears("⬅️ Về menu", (ctx) => {
+  ctx.reply("🏠 Menu chính:", mainMenu());
+});
+
+// --- Express Webhook ---
+app.use(await bot.createWebhook({ domain: process.env.RENDER_EXTERNAL_URL || `https://jipu-bot.onrender.com` }));
+
 app.listen(PORT, () => {
   console.log(`🌐 Server running on port ${PORT}`);
 });

@@ -1,19 +1,26 @@
-import { updateUser } from "../utils/db.js";
+// services/lang.js
+import { updateUser, findUser } from "../utils/db.js";
 import { getText } from "../utils/lang.js";
+import { mainMenu } from "./menu.js";
 
-export function handleLanguage(bot, msg) {
-  bot.sendMessage(msg.chat.id, "🌐 Select language / Chọn ngôn ngữ", {
+export function handleLanguage(ctx) {
+  ctx.reply("🌐 Chọn ngôn ngữ:", {
     reply_markup: {
       keyboard: [
         [{ text: "🇻🇳 Tiếng Việt" }, { text: "🇬🇧 English" }],
-        [{ text: "⬅️ Menu" }]
+        [{ text: "⬅️ Về menu" }]
       ],
       resize_keyboard: true
     }
   });
 }
 
-export function handleLangSwitch(bot, msg, lang) {
-  updateUser(msg.from.id, { lang });
-  bot.sendMessage(msg.chat.id, getText("lang_changed", lang));
+export function setLanguage(ctx, lang) {
+  const id = ctx.from.id;
+  let user = findUser(id);
+  if (user) {
+    updateUser(id, { lang });
+  }
+  const text = getText("lang_changed", lang);
+  ctx.reply(text, mainMenu());
 }
