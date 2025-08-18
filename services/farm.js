@@ -1,8 +1,10 @@
-import { addBalance, getBalance } from "../utils/db.js";
+// services/farm.js
+import { actionKeyboard } from "../utils/ui.js";
 
 export async function handleFarm(bot, chatId, userId, t, lang) {
-  const gain = 1; // mỗi lần farm +1
-  const newBal = await addBalance(userId, gain);
-  const msg = t(lang, "farm_ok", { gain, balance: newBal });
-  await bot.sendMessage(chatId, msg);
+  // ⚠️ Bạn thay phần này bằng logic thật (DB, farm points...)
+  const amount = 10; 
+  const farmText = t(lang, "farm_result", { amount });
+
+  await bot.sendMessage(chatId, farmText, actionKeyboard("farm", lang, t));
 }

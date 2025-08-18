@@ -1,6 +1,10 @@
-import { getBalance } from "../utils/db.js";
+// services/balance.js
+import { actionKeyboard } from "../utils/ui.js";
 
 export async function handleBalance(bot, chatId, userId, t, lang) {
-  const bal = await getBalance(userId);
-  await bot.sendMessage(chatId, t(lang, "balance_text", { balance: bal }));
+  // ⚠️ Lấy balance từ DB thật
+  const balance = 100; 
+  const balanceText = t(lang, "balance_text", { balance });
+
+  await bot.sendMessage(chatId, balanceText, actionKeyboard("balance", lang, t));
 }

@@ -98,48 +98,41 @@ bot.onText(/\/help/, async (msg) => {
 });
 
 // ───── Callback query ─────
-bot.on("callback_query", async (q) => {
-  const chatId = q.message.chat.id;
-  const userId = q.from.id;
-  const lang = await getUserLang(userId);
-
-  try {
-    switch (q.data) {
-      case "farm":
+// trong switch (q.data):
+switch (q.data) {
+  case "farm":
+    await handleFarm(bot, chatId, userId, t, lang);
+    break;
+  case "balance":
+    await handleBalance(bot, chatId, userId, t, lang);
+    break;
+  case "ref":
+    await handleReferral(bot, chatId, userId, t, lang, BOT_USERNAME);
+    break;
+  case "help":
+    await handleHelp(bot, chatId, t, lang);
+    break;
+  case "intro":
+    await bot.sendMessage(chatId, t(lang, "about_text"), backMenuKeyboard(lang, t));
+    break;
+  case "lang":
+    await showLangMenu(bot, chatId, t);
+    break;
+  case "back_menu":
+    await bot.sendMessage(chatId, t(lang, "choose_next"), getMainMenu(t, lang));
+    break;
+  default:
+    // ✅ xử lý refresh
+    if (q.data.startsWith("refresh:")) {
+      const type = q.data.split(":")[1];
+      if (type === "farm") {
         await handleFarm(bot, chatId, userId, t, lang);
-        break;
-      case "balance":
+      } else if (type === "balance") {
         await handleBalance(bot, chatId, userId, t, lang);
-        break;
-      case "ref":
-        await handleReferral(bot, chatId, userId, t, lang, BOT_USERNAME);
-        break;
-      case "help":
-        await handleHelp(bot, chatId, t, lang);
-        break;
-      case "intro":
-        await bot.sendMessage(chatId, t(lang, "about_text"), {
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: "⬅️ " + t(lang, "back_menu"), callback_data: "back_menu" }]
-            ]
-          }
-        });
-        break;
-      case "lang":
-        await showLangMenu(bot, chatId, t);
-        break;
-      case "back_menu":
-        await bot.sendMessage(chatId, t(lang, "choose_next"), getMainMenu(t, lang));
-        break;
-      default:
-        if (q.data.startsWith("set_lang:")) {
-          const newLang = q.data.split(":")[1];
-          await handleLangSet(bot, chatId, userId, newLang, t);
-          await bot.sendMessage(chatId, t(newLang, "choose_next"), getMainMenu(t, newLang));
-        }
+      }
+    } else if (q.data.startsWith("set_lang:")) {
+      const newLang = q.data.split(":")[1];
+      await handleLangSet(bot, chatId, userId, newLang, t);
+      await bot.sendMessage(chatId, t(newLang, "choose_next"), getMainMenu(t, newLang));
     }
-  } finally {
-    bot.answerCallbackQuery(q.id).catch(() => {});
-  }
-});
+}
