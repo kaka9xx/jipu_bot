@@ -1,11 +1,10 @@
 // services/menu.js
-
 export function getMainMenu(t, lang) {
   return {
     reply_markup: {
       inline_keyboard: [
         [
-          { text: "🌱 " + t(lang, "farm_btn"), callback_data: "farm" },
+          { text: "🌾 " + t(lang, "farm_btn"), callback_data: "farm" },
           { text: "💰 " + t(lang, "balance_btn"), callback_data: "balance" }
         ],
         [

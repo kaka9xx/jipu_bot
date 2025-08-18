@@ -1,7 +1,10 @@
 // services/balance.js
-import { backMenuKeyboard } from "../utils/ui.js";
+import { actionKeyboard } from "../utils/ui.js";
 
-export async function handleBalance(bot, chatId, t, lang, user) {
-  const msg = t(lang, "balance_text").replace("{balance}", user.balance || 0);
-  await bot.sendMessage(chatId, msg, backMenuKeyboard(lang, t));
+export async function handleBalance(bot, chatId, userId, t, lang) {
+  // TODO: thay bằng DB thật của bạn
+  const u = (global.__users && global.__users.get(userId)) || { balance: 0 };
+  const msg = t(lang, "balance_text", { balance: u.balance });
+  // Refresh dùng callback "balance" sẵn có trong index.js
+  await bot.sendMessage(chatId, msg, actionKeyboard("balance", lang, t));
 }

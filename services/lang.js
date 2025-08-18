@@ -1,21 +1,24 @@
 // services/lang.js
 import { backMenuKeyboard } from "../utils/ui.js";
+import { setUserLang } from "../utils/db.js";
 
-export async function handleLang(bot, chatId, t, lang) {
-  const opts = {
+// Hiện menu chọn ngôn ngữ
+export async function showLangMenu(bot, chatId, t) {
+  await bot.sendMessage(chatId, t("vi", "lang_choose"), {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "🇻🇳 Tiếng Việt", callback_data: "set_lang_vi" }],
-        [{ text: "🇬🇧 English", callback_data: "set_lang_en" }],
-        [{ text: t(lang, "back_menu"), callback_data: "back_menu" }]
+        [
+          { text: "🇻🇳 Tiếng Việt", callback_data: "set_lang:vi" },
+          { text: "🇬🇧 English", callback_data: "set_lang:en" }
+        ],
+        [{ text: "⬅️ " + t("vi", "back_menu"), callback_data: "back_menu" }]
       ]
     }
-  };
-
-  await bot.sendMessage(chatId, t(lang, "lang_choose"), opts);
+  });
 }
 
-export async function setLang(bot, chatId, t, lang, newLang, users) {
-  users[chatId].lang = newLang;
+// Cập nhật ngôn ngữ của user (được index.js gọi)
+export async function handleLangSet(bot, chatId, userId, newLang, t) {
+  await setUserLang(userId, newLang);      // dùng DB thật của bạn
   await bot.sendMessage(chatId, t(newLang, "lang_set_ok"), backMenuKeyboard(newLang, t));
 }
