@@ -1,10 +1,13 @@
 // services/farm.js
-import { actionKeyboard } from "../utils/ui.js";
+import { backMenuKeyboard } from "../utils/ui.js";
 
-export async function handleFarm(bot, chatId, userId, t, lang) {
-  // ⚠️ Bạn thay phần này bằng logic thật (DB, farm points...)
-  const amount = 10; 
-  const farmText = t(lang, "farm_result", { amount });
+export async function handleFarm(bot, chatId, t, lang, user) {
+  const gain = Math.floor(Math.random() * 10) + 1;
+  user.balance = (user.balance || 0) + gain;
 
-  await bot.sendMessage(chatId, farmText, actionKeyboard("farm", lang, t));
+  const msg = t(lang, "farm_ok")
+    .replace("{gain}", gain)
+    .replace("{balance}", user.balance);
+
+  await bot.sendMessage(chatId, msg, backMenuKeyboard(lang, t));
 }

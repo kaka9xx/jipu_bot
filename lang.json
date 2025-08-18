@@ -7,18 +7,17 @@
     "referral_btn": "Giới thiệu",
     "help_btn": "Hướng dẫn",
     "lang_btn": "Ngôn ngữ",
-    "about_btn": "Giới thiệu",
+    "intro_btn": "Giới thiệu",
     "farm_ok": "🌾 Bạn đã farm +{gain}. Số dư hiện tại: {balance}.",
-    "balance_text": "💰 Số dư của bạn: {balance}",
+    "farm_result": "🌱 Bạn đã thu hoạch {amount} hạt giống!",
+    "balance_text": "💰 Số dư hiện tại của bạn: {balance}",
     "referral_text": "👥 Link giới thiệu của bạn:\n{link}\n\nMời bạn bè tham gia để nhận thưởng!",
     "help_text": "❓ Hướng dẫn:\n• Nhấn 'Farm' để tích điểm\n• 'Số dư' để xem điểm\n• 'Giới thiệu' để lấy link mời\n• 'Ngôn ngữ' để đổi ngôn ngữ\n• 'Giới thiệu' để xem lore JIPU",
     "about_text": "📜 Huyền thoại JIPU:\nJIPU không biến mất – nó chỉ đang ngủ đông. Khi bóng tối lan rộng, chỉ những chiến binh thật sự mới đủ sức đánh thức JIPU.\n\n⚡ Farm = thắp lửa\n💎 Năng lượng = sức mạnh hồi sinh\n🔥 Ai gắn bó từ đầu sẽ chứng kiến khoảnh khắc JIPU trỗi dậy.",
     "lang_choose": "🌐 Chọn ngôn ngữ:",
     "lang_set_ok": "✅ Đã đổi ngôn ngữ.",
-    "refresh": "Làm mới",
-    "back_menu": "Về menu chính",
-    "farm_result": "Bạn đã thu hoạch {amount} hạt giống 🌱",
-    "balance_text": "Số dư hiện tại của bạn là {balance} 💰"
+    "refresh": "🔄 Làm mới",
+    "back_menu": "⬅️ Về menu chính"
   },
   "en": {
     "start": "🚀 **JIPU Army – Up & Running!** 🚀\n\nJIPULAND is making waves!  \nThis is not just a bot, it's a **movement**, where every farm is a voice.  \nEarly joiners become OGs, holding the keys to glory when JIPU rises again.\n\n⚡ Farm = charge your energy  \n🙌 Invite friends = build your alliance  \n👑 Be the first to join the camp\n\n⏳ Don’t miss the hype train!  \n👉 Choose your move now:",
@@ -28,17 +27,16 @@
     "referral_btn": "Referral",
     "help_btn": "Help",
     "lang_btn": "Language",
-    "about_btn": "About",
+    "intro_btn": "About",
     "farm_ok": "🌾 You farmed +{gain}. Current balance: {balance}.",
-    "balance_text": "💰 Your balance: {balance}",
+    "farm_result": "🌱 You harvested {amount} seeds!",
+    "balance_text": "💰 Your current balance: {balance}",
     "referral_text": "👥 Your referral link:\n{link}\n\nInvite friends to earn rewards!",
     "help_text": "❓ Help:\n• Tap 'Farm' to gain points\n• 'Balance' to view your points\n• 'Referral' to get your invite link\n• 'Language' to change language\n• 'About' to read JIPU lore",
     "about_text": "📜 The Legend of JIPU:\nJIPU never died – it only sleeps. As darkness spreads, only true warriors can awaken its power.\n\n⚡ Farming = spark the flame\n💎 Energy = fuel the resurrection\n🔥 Early believers will witness the rise of JIPU.",
     "lang_choose": "🌐 Choose your language:",
     "lang_set_ok": "✅ Language updated.",
-    "refresh": "Refresh",
-    "back_menu": "Back to menu",
-    "farm_result": "You harvested {amount} seeds 🌱",
-    "balance_text": "Your current balance is {balance} 💰"
+    "refresh": "🔄 Refresh",
+    "back_menu": "⬅️ Back to menu"
   }
 }
