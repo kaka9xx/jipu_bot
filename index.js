@@ -56,7 +56,7 @@ app.post("/webhook", async (req, res) => {
 
   if (text === "/start") {
     await sendMessage(chatId, lang.start, mainMenu(lang));
-  } else if (text === "⬅️") {
+  } else if (text === lang.back) {
     await sendMessage(chatId, lang.start, mainMenu(lang));
   } else if (text === "🌾 Farm") {
     const reward = Math.floor(Math.random() * 10) + 1;
