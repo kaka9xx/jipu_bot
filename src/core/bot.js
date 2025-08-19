@@ -10,16 +10,19 @@ function initBot() {
     const oldOn = this.on;
     this.on = (event, handler) => {
       oldOn.call(this, event, async (msg, ...args) => {
-        // inject middleware
-        await mw(msg, async () => {
-          // middleware gắn msg.t vào đây
-          handler(msg, ...args);
-        });
+        try {
+          // inject middleware
+          await mw(msg, async () => {
+            await handler(msg, ...args);
+          });
+        } catch (err) {
+          console.error("❌ Middleware/Handler error:", err);
+        }
       });
     };
   };
 
-  // gắn middleware
+  // gắn middleware ngôn ngữ
   bot.use(async (msg, next) => {
     await langMiddleware(msg, next);
   });
@@ -36,6 +39,7 @@ function initBot() {
     bot.sendMessage(msg.chat.id, msg.t("lang_set_ok"));
   });
 
+  console.log("✅ Bot started with polling...");
   return bot;
 }
 
