@@ -1,0 +1,1 @@
+# jipu_bot\n\nBot skeleton with modular structure and Jest tests.
