@@ -27,5 +27,7 @@
 
   "error_general": "⚠️ Something went wrong, please try again.",
   "error_not_found": "❓ No data found.",
-  "success": "✅ Action completed successfully!"
+  "success": "✅ Action completed successfully!",
+  "help_message": "Here are the commands you can use:",
+  "welcome_message": "Welcome! Your language is set to English."
 }

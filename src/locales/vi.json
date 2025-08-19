@@ -27,5 +27,7 @@
 
   "error_general": "⚠️ Có lỗi xảy ra, vui lòng thử lại.",
   "error_not_found": "❓ Không tìm thấy dữ liệu.",
-  "success": "✅ Thao tác thành công!"
+  "success": "✅ Thao tác thành công!",
+  "help_message": "Đây là các lệnh bạn có thể dùng:",
+  "welcome_message": "Chào mừng! Ngôn ngữ của bạn đã được đặt là Tiếng Việt."
 }

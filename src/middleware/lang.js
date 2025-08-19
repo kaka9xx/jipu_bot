@@ -1,27 +1,31 @@
 // src/middleware/lang.js
-const { getUserById, createUser } = require("../services/userRepo");
-const { t } = require("../i18n");
+const { t } = require('../i18n');
+const { getUserById } = require('../services/userService');
 
 /**
- * Middleware để inject hàm translate (ctx.t) theo user lang
- * @param {object} ctx - context Telegram (msg hoặc callback_query)
- * @param {function} next - hàm tiếp theo
+ * Middleware i18n
+ * Gắn hàm msg.t(key) để dùng trong command
  */
-async function langMiddleware(ctx, next) {
-  const chatId = ctx.chat?.id || ctx.from?.id;
-  if (!chatId) return next();
+async function langMiddleware(msg, next) {
+  try {
+    // lấy userId từ msg (tùy bạn đang dùng telegram hay messenger)
+    const userId = msg.from?.id || msg.chat?.id;
 
-  let user = await getUserById(chatId);
-  if (!user) {
-    // nếu user chưa có → tạo mới với lang mặc định = en
-    user = await createUser({ id: chatId, lang: "en", balance: 0 });
+    // lấy locale từ DB (userService), nếu không có mặc định en
+    let locale = 'en';
+    const user = await getUserById(userId);
+    if (user && user.locale) {
+      locale = user.locale;
+    }
+
+    // gắn hàm dịch vào msg
+    msg.t = (key) => t(locale, key);
+
+    next();
+  } catch (err) {
+    console.error('Lang middleware error:', err);
+    next();
   }
-
-  // gắn translate vào ctx
-  ctx.user = user;
-  ctx.t = (key, vars = {}) => t(user.lang || "en", key, vars);
-
-  return next();
 }
 
-module.exports = { langMiddleware };
+module.exports = langMiddleware;
