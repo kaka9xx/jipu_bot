@@ -1,0 +1,31 @@
+{
+  "start": "🚀 JIPU Army is up & running!\n\nWelcome to JIPULAND.",
+  "choose_next": "Choose your next action:",
+
+  "farm_btn": "🌾 Farm",
+  "balance_btn": "💰 Balance",
+  "referral_btn": "👥 Referral",
+  "help_btn": "❓ Help",
+  "lang_btn": "🌐 Language",
+  "about_btn": "📜 About",
+  "back_menu": "🔙 Back to menu",
+
+  "lang_choose": "🌐 Choose your language:",
+  "lang_set_ok": "✅ Language updated.",
+
+  "farm_ok": "🌾 You farmed +{gain}. Current balance: {balance}.",
+  "farm_cooldown": "⏳ You farmed recently! Come back in {minutes} minutes.",
+  "balance_text": "💰 Your balance: {balance}",
+
+  "referral_text": "👥 Your referral link:\n{link}",
+  "referral_bonus": "🎁 You earned +{bonus} from referring {user}.",
+  "referral_self": "⚠️ You cannot refer yourself!",
+  "referral_already": "⚠️ This user has already been referred.",
+
+  "help_text": "❓ Help:\n• 'Farm' to gain points\n• 'Balance' to view your points\n• 'Referral' to get your invite link\n• 'Language' to change language\n• 'About' to read JIPU lore",
+  "about_text": "📜 The legend of JIPU: It never died — it only sleeps.",
+
+  "error_general": "⚠️ Something went wrong, please try again.",
+  "error_not_found": "❓ No data found.",
+  "success": "✅ Action completed successfully!"
+}
