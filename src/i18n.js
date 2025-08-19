@@ -1,10 +1,8 @@
+// src/i18n.js
 const fs = require("fs");
 const path = require("path");
 
-// Đúng đường dẫn tới thư mục locales (ngang cấp với i18n.js trong src/)
 const localesPath = path.join(__dirname, "locales");
-
-// Đọc danh sách file JSON trong thư mục locales
 const files = fs.readdirSync(localesPath);
 
 const translations = {};
@@ -16,7 +14,6 @@ for (const file of files) {
   }
 }
 
-// Hàm dịch
 function t(lang, key) {
   return translations[lang]?.[key] || key;
 }
