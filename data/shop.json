@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "id": "potion",
+      "name_en": "Health Potion",
+      "name_vi": "Bình Máu",
+      "price": 10,
+      "desc_en": "Restore a bit of health.",
+      "desc_vi": "Hồi một ít máu."
+    },
+    {
+      "id": "sword",
+      "name_en": "Iron Sword",
+      "name_vi": "Kiếm Sắt",
+      "price": 50,
+      "desc_en": "A sturdy iron sword.",
+      "desc_vi": "Thanh kiếm sắt bền chắc."
+    },
+    {
+      "id": "shield",
+      "name_en": "Wooden Shield",
+      "name_vi": "Khiên Gỗ",
+      "price": 35,
+      "desc_en": "Basic wooden shield.",
+      "desc_vi": "Khiên gỗ cơ bản."
+    }
+  ]
+}

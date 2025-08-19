@@ -1,10 +1,14 @@
+// src/core/bot.js
 const TelegramBot = require("node-telegram-bot-api");
 const { getUserById, addOrUpdateUser } = require("./user");
 const { handleCommand } = require("./commandHandler");
-const { handleMenu } = require("./menuHandler"); // ✅ gọi riêng
+const { showMainMenu, showReplyMenu } = require("../utils/menu");
+const { handleMenu } = require("./menuHandler");
 
 const token = process.env.BOT_TOKEN;
-if (!token) throw new Error("Missing BOT_TOKEN in environment");
+if (!token) {
+  throw new Error("Missing BOT_TOKEN in environment");
+}
 
 const bot = new TelegramBot(token, { webHook: true });
 
@@ -26,20 +30,40 @@ function setupBot(app) {
     }
   });
 
-  // Xử lý message text (ví dụ /start, /menu)
-  bot.on("message", (msg) => {
+  // Handle /start
+  bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
     const existing = getUserById(chatId);
     const lang = existing?.lang || "en";
+    if (!existing) addOrUpdateUser({ id: chatId, lang });
 
-    if (!existing) {
-      addOrUpdateUser({ id: chatId, lang, points: 0 });
-    }
+    bot.sendMessage(chatId, "👋 Welcome to Farm Bot!");
+    showMainMenu(bot, chatId);
+  });
+
+  // Handle /menu (hiện menu inline)
+  bot.onText(/\/menu/, (msg) => {
+    showMainMenu(bot, msg.chat.id);
+  });
+
+  // Handle /replymenu (bật reply menu)
+  bot.onText(/\/replymenu/, (msg) => {
+    showReplyMenu(bot, msg.chat.id);
+  });
+
+  // Handle message chung
+  bot.on("message", (msg) => {
+    const chatId = msg.chat.id;
+    if (msg.text.startsWith("/")) return; // tránh trùng với lệnh ở trên
+
+    const existing = getUserById(chatId);
+    const lang = existing?.lang || "en";
+    if (!existing) addOrUpdateUser({ id: chatId, lang });
 
     handleCommand(bot, msg, lang);
   });
 
-  // ✅ Tách riêng menu callback
+  // Handle callback query (inline keyboard)
   bot.on("callback_query", (query) => handleMenu(bot, query));
 }
 

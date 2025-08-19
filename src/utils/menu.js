@@ -1,36 +1,40 @@
 // src/utils/menu.js
-const mainMenu = {
-  reply_markup: {
-    inline_keyboard: [
-      [
-        { text: "🌾 Farm", callback_data: "farm" },
-        { text: "💰 Claim", callback_data: "claim" },
-      ],
-      [
-        { text: "🛒 Shop", callback_data: "shop" },
-        { text: "⚙️ Settings", callback_data: "settings" },
-      ],
-    ],
-  },
-};
+const { t } = require("../i18n");
 
-const replyMenu = {
+function mainMenu(lang = "en") {
+  return {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          { text: t(lang, "btn_farm"), callback_data: "farm" },
+          { text: t(lang, "btn_claim"), callback_data: "claim" },
+        ],
+        [
+          { text: t(lang, "btn_shop"), callback_data: "shop" },
+          { text: t(lang, "btn_settings"), callback_data: "settings" },
+        ],
+      ],
+    },
+  };
+}
+
+const replyMenu = (lang = "en") => ({
   reply_markup: {
     keyboard: [
-      ["🌾 Farm", "💰 Claim"],
-      ["🛒 Shop", "⚙️ Settings"],
+      [t(lang, "btn_farm"), t(lang, "btn_claim")],
+      [t(lang, "btn_shop"), t(lang, "btn_settings")],
     ],
     resize_keyboard: true,
     one_time_keyboard: false,
   },
-};
+});
 
-function showMainMenu(bot, chatId) {
-  bot.sendMessage(chatId, "📍 Main Menu:", mainMenu);
+function showMainMenu(bot, chatId, lang = "en") {
+  bot.sendMessage(chatId, t(lang, "menu_main"), mainMenu(lang));
 }
 
-function showReplyMenu(bot, chatId) {
-  bot.sendMessage(chatId, "📍 Reply Menu bật:", replyMenu);
+function showReplyMenu(bot, chatId, lang = "en") {
+  bot.sendMessage(chatId, t(lang, "reply_menu_on"), replyMenu(lang));
 }
 
-module.exports = { showMainMenu, showReplyMenu };
+module.exports = { showMainMenu, showReplyMenu, mainMenu, replyMenu };
