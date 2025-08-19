@@ -4,7 +4,7 @@ const { initBot } = require("./src/core/bot");
 const { langMiddleware } = require("./src/middleware/lang");
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
-const url = process.env.RENDER_EXTERNAL_URL; // Render cấp URL public
+const url = process.env.RENDER_EXTERNAL_URL;
 const port = process.env.PORT || 10000;
 
 console.log("🚀 Bot webhook server running on port", port);
@@ -24,6 +24,7 @@ app.post(`/bot${token}`, async (req, res) => {
   const update = req.body;
 
   if (update.message) {
+    // đảm bảo middleware chạy trước khi bot xử lý
     await langMiddleware(update.message, async () => {
       bot.processUpdate(update);
     });

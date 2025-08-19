@@ -3,7 +3,7 @@ const { langMiddleware } = require("../middleware/lang");
 const { updateUser } = require("../services/userRepo");
 
 function initBot() {
-  const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN);
+  const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { webHook: true });
 
   // patch bot.use
   bot.use = function (mw) {
@@ -24,7 +24,7 @@ function initBot() {
 
   // /start
   bot.onText(/\/start/, async (msg) => {
-    bot.sendMessage(msg.chat.id, msg.t("start"));
+    bot.sendMessage(msg.chat.id, msg.t("start")); // msg.t chắc chắn có
   });
 
   // /lang vi|en
