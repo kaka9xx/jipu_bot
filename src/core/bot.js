@@ -1,37 +1,58 @@
 const TelegramBot = require("node-telegram-bot-api");
-const { langMiddleware } = require("../middleware/lang");
-const { updateUser } = require("../services/userRepo");
+const { t } = require("../i18n");
+const { getUserById, saveUser } = require("../services/userService");
 
 function initBot() {
-  const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { webHook: true });
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) throw new Error("⚠️ TELEGRAM_BOT_TOKEN chưa được cấu hình");
 
-  // patch bot.use
-  bot.use = function (mw) {
-    const oldOn = this.on;
-    this.on = (event, handler) => {
-      oldOn.call(this, event, async (msg, ...args) => {
-        await mw(msg, async () => {
-          handler(msg, ...args);
-        });
-      });
-    };
-  };
+  const bot = new TelegramBot(token);
 
-  // middleware đa ngôn ngữ
-  bot.use(async (msg, next) => {
-    await langMiddleware(msg, next);
-  });
+  // Helper: lấy locale của user
+  function getLocale(userId) {
+    const user = getUserById(userId);
+    return user?.locale || "en";
+  }
+
+  // Helper: gửi tin nhắn với dịch tự động
+  function sendT(chatId, key, params = {}) {
+    const locale = getLocale(chatId);
+    return bot.sendMessage(chatId, t(locale, key, params));
+  }
+
+  // ====== HANDLERS ======
 
   // /start
   bot.onText(/\/start/, async (msg) => {
-    bot.sendMessage(msg.chat.id, msg.t("start")); // msg.t chắc chắn có
+    const chatId = msg.chat.id;
+
+    // lưu user nếu chưa có
+    if (!getUserById(chatId)) {
+      saveUser(chatId, { locale: "en" }); // mặc định English
+    }
+
+    await sendT(chatId, "start");
   });
 
-  // /lang vi|en
-  bot.onText(/\/lang (vi|en)/, async (msg, match) => {
-    const lang = match[1];
-    await updateUser(msg.chat.id, { lang });
-    bot.sendMessage(msg.chat.id, msg.t("lang_set_ok"));
+  // /lang vi hoặc /lang en
+  bot.onText(/\/lang (.+)/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const newLocale = match[1].toLowerCase();
+
+    if (!["en", "vi"].includes(newLocale)) {
+      return bot.sendMessage(chatId, "❌ Only 'en' or 'vi' supported");
+    }
+
+    saveUser(chatId, { locale: newLocale });
+
+    await sendT(chatId, "lang_changed");
+  });
+
+  // fallback message
+  bot.on("message", async (msg) => {
+    if (msg.text && !msg.text.startsWith("/")) {
+      await sendT(msg.chat.id, "unknown_command");
+    }
   });
 
   return bot;

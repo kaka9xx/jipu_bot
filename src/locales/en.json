@@ -29,5 +29,7 @@
   "error_not_found": "❓ No data found.",
   "success": "✅ Action completed successfully!",
   "help_message": "Here are the commands you can use:",
-  "welcome_message": "Welcome! Your language is set to English."
+  "welcome_message": "Welcome! Your language is set to English.",
+   "lang_changed": "✅ Your language has been updated!",
+  "unknown_command": "❓ Sorry, I don't understand that command."
 }

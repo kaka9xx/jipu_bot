@@ -29,5 +29,7 @@
   "error_not_found": "❓ Không tìm thấy dữ liệu.",
   "success": "✅ Thao tác thành công!",
   "help_message": "Đây là các lệnh bạn có thể dùng:",
-  "welcome_message": "Chào mừng! Ngôn ngữ của bạn đã được đặt là Tiếng Việt."
+  "welcome_message": "Chào mừng! Ngôn ngữ của bạn đã được đặt là Tiếng Việt.",
+   "lang_changed": "✅ Ngôn ngữ của bạn đã được cập nhật!",
+  "unknown_command": "❓ Xin lỗi, mình không hiểu lệnh này."
 }
