@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const { initBot } = require("./src/core/bot");
-const { langMiddleware } = require("./src/middleware/lang");
+const langMiddleware = require("./src/middleware/lang"); // 🔥 sửa chỗ này
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const url = process.env.RENDER_EXTERNAL_URL;
