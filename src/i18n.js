@@ -3,14 +3,21 @@ const fs = require("fs");
 const path = require("path");
 
 const localesPath = path.join(__dirname, "locales");
-const files = fs.readdirSync(localesPath);
+if (!fs.existsSync(localesPath)) {
+  fs.mkdirSync(localesPath, { recursive: true });
+}
 
+const files = fs.readdirSync(localesPath);
 const translations = {};
 
 for (const file of files) {
   if (file.endsWith(".json")) {
     const lang = path.basename(file, ".json");
-    translations[lang] = require(path.join(localesPath, file));
+    try {
+      translations[lang] = require(path.join(localesPath, file));
+    } catch {
+      translations[lang] = {};
+    }
   }
 }
 

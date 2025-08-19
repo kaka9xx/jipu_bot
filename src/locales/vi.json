@@ -1,36 +1,6 @@
 {
-  "start": "🚀 JIPU Army đã sẵn sàng!\n\nChào mừng bạn đến với JIPULAND.",
-  "choose_next": "Chọn hành động tiếp theo:",
-  "hello": "Xin chào, bạn khỏe không?",
-
-  "farm_btn": "🌾 Farm",
-  "balance_btn": "💰 Số dư",
-  "referral_btn": "👥 Giới thiệu",
-  "help_btn": "❓ Hướng dẫn",
-  "lang_btn": "🌐 Ngôn ngữ",
-  "about_btn": "📜 Giới thiệu",
-  "back_menu": "🔙 Về menu chính",
-
-  "lang_choose": "🌐 Chọn ngôn ngữ:",
-  "lang_set_ok": "✅ Đã đổi ngôn ngữ.",
-
-  "farm_ok": "🌾 Bạn đã farm +{gain}. Số dư hiện tại: {balance}.",
-  "farm_cooldown": "⏳ Bạn đã farm gần đây rồi! Hãy quay lại sau {minutes} phút.",
-  "balance_text": "💰 Số dư của bạn: {balance}",
-
-  "referral_text": "👥 Link giới thiệu của bạn:\n{link}",
-  "referral_bonus": "🎁 Bạn nhận được +{bonus} từ việc giới thiệu {user}.",
-  "referral_self": "⚠️ Bạn không thể tự giới thiệu chính mình!",
-  "referral_already": "⚠️ Người dùng này đã được giới thiệu trước đó.",
-
-  "help_text": "❓ Hướng dẫn:\n• 'Farm' để tích điểm\n• 'Số dư' để xem điểm\n• 'Giới thiệu' để lấy link mời bạn bè\n• 'Ngôn ngữ' để đổi ngôn ngữ\n• 'Giới thiệu' để xem lore JIPU",
-  "about_text": "📜 Huyền thoại JIPU: Nó chưa biến mất — chỉ đang ngủ đông.",
-
-  "error_general": "⚠️ Có lỗi xảy ra, vui lòng thử lại.",
-  "error_not_found": "❓ Không tìm thấy dữ liệu.",
-  "success": "✅ Thao tác thành công!",
-  "help_message": "Đây là các lệnh bạn có thể dùng:",
   "welcome_message": "Chào mừng! Ngôn ngữ của bạn đã được đặt là Tiếng Việt.",
-   "lang_changed": "✅ Ngôn ngữ của bạn đã được cập nhật!",
-  "unknown_command": "❓ Xin lỗi, mình không hiểu lệnh này."
+  "help_message": "Các lệnh: /start, /help, /echo <văn bản>.",
+  "echo_empty": "Không có gì để lặp lại.",
+  "unknown_command": "Xin lỗi, mình không hiểu lệnh này."
 }

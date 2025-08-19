@@ -1,24 +1,18 @@
 // src/core/user.js
 const users = new Map();
 
-// Lấy user theo chatId
 function getUserById(chatId) {
-  return users.get(chatId) || null;
+  return users.get(String(chatId)) || null;
 }
 
-// Thêm/cập nhật user
-function addUser(user) {
-  users.set(user.id, user);
+function addOrUpdateUser(user) {
+  if (!user || user.id == null) return null;
+  users.set(String(user.id), user);
   return user;
 }
 
-// Xóa user
 function removeUser(chatId) {
-  return users.delete(chatId);
+  return users.delete(String(chatId));
 }
 
-module.exports = {
-  getUserById,
-  addUser,
-  removeUser
-};
+module.exports = { getUserById, addOrUpdateUser, removeUser };

@@ -1,24 +1,19 @@
-// src/index.js
+// index.js
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
-const langMiddleware = require("./middleware/lang");
-const { setupBot } = require("./core/bot");
+const langMiddleware = require("./src/middleware/lang");
+const { setupBot } = require("./src/core/bot");
 
 const app = express();
 app.use(bodyParser.json());
-
-// middleware ngôn ngữ
 app.use(langMiddleware);
 
-// khởi tạo bot + webhook
+app.get("/", (_, res) => res.send("JIPU bot is alive 🚀"));
+
 setupBot(app);
 
-// test route
-app.get("/", (req, res) => {
-  res.send("Bot is running 🚀");
-});
-
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 10000;
 app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+  console.log(`✅ Server listening on port ${port}`);
 });

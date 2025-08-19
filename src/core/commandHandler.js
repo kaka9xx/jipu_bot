@@ -1,21 +1,27 @@
-const start = require('../commands/start');
-const help = require('../commands/help');
-const echo = require('../commands/echo');
+// src/core/commandHandler.js
+const { t } = require("../i18n");
 
-function handleCommand(command, context) {
-  switch(command) {
-    case "start":
-      start.execute(context);
-      break;
-    case "help":
-      help.execute(context);
-      break;
-    case "echo":
-      echo.execute(context);
-      break;
-    default:
-      console.log("Unknown command:", command);
+function handleCommand(bot, msg, lang) {
+  const chatId = msg.chat.id;
+  const text = (msg.text || "").trim();
+
+  if (text.startsWith("/start")) {
+    bot.sendMessage(chatId, t(lang, "welcome_message"));
+    return;
   }
+
+  if (text.startsWith("/help")) {
+    bot.sendMessage(chatId, t(lang, "help_message"));
+    return;
+  }
+
+  if (text.startsWith("/echo")) {
+    const rest = text.replace("/echo", "").trim();
+    bot.sendMessage(chatId, rest || t(lang, "echo_empty"));
+    return;
+  }
+
+  bot.sendMessage(chatId, t(lang, "unknown_command"));
 }
 
 module.exports = { handleCommand };

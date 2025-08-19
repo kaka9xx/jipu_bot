@@ -1,34 +1,40 @@
 // src/core/bot.js
 const TelegramBot = require("node-telegram-bot-api");
-const { getUserById, addUser } = require("./user");
-const { t } = require("../i18n");
+const { getUserById, addOrUpdateUser } = require("./user");
+const { handleCommand } = require("./commandHandler");
 
 const token = process.env.BOT_TOKEN;
+if (!token) {
+  throw new Error("Missing BOT_TOKEN in environment");
+}
 
-// dùng webhook trên Render
-const bot = new TelegramBot(token);
+const bot = new TelegramBot(token, { webHook: true });
 
 function setupBot(app) {
-  // set webhook cho Render
-  bot.setWebHook(`${process.env.RENDER_EXTERNAL_URL}/webhook/${token}`);
+  const baseUrl = process.env.RENDER_EXTERNAL_URL || "";
+  const webhookPath = `/webhook/${token}`;
+  const webhookUrl = `${baseUrl}${webhookPath}`;
 
-  // nhận tin nhắn
-  bot.on("message", (msg) => {
-    const chatId = msg.chat.id;
+  bot.setWebHook(webhookUrl);
+  console.log("🌐 Webhook set to:", webhookUrl);
 
-    // nếu user chưa tồn tại thì thêm mới
-    if (!getUserById(chatId)) {
-      addUser({ id: chatId, lang: "en" });
+  app.post(webhookPath, (req, res) => {
+    try {
+      bot.processUpdate(req.body);
+      res.sendStatus(200);
+    } catch (e) {
+      console.error("processUpdate error:", e);
+      res.sendStatus(500);
     }
-
-    // trả lời user
-    bot.sendMessage(chatId, t("en", "hello")); // key trong locales/en.json
   });
 
-  // endpoint webhook
-  app.post(`/webhook/${token}`, (req, res) => {
-    bot.processUpdate(req.body);
-    res.sendStatus(200);
+  bot.on("message", (msg) => {
+    const chatId = msg.chat.id;
+    const existing = getUserById(chatId);
+    const lang = existing?.lang || "en";
+    if (!existing) addOrUpdateUser({ id: chatId, lang });
+
+    handleCommand(bot, msg, lang);
   });
 }
 
