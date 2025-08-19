@@ -1,20 +1,38 @@
 {
   "vi": {
-    "start": "👋 Chào mừng bạn đến với Jipu Bot!",
-    "farm": "Bạn đã farm được",
-    "balance": "Số dư hiện tại",
-    "referral": "Link giới thiệu",
-    "help": "Hướng dẫn sử dụng bot",
-    "about": "Thông tin về bot",
-    "lang_choose": "Chọn ngôn ngữ:"
+    "start": "🚀 JIPU Army đã sẵn sàng!\n\nChào mừng bạn đến với JIPULAND.",
+    "choose_next": "Chọn hành động tiếp theo:",
+    "farm_btn": "🌾 Farm",
+    "balance_btn": "💰 Số dư",
+    "referral_btn": "👥 Giới thiệu",
+    "help_btn": "❓ Hướng dẫn",
+    "lang_btn": "🌐 Ngôn ngữ",
+    "about_btn": "📜 Giới thiệu",
+    "back_menu": "Về menu chính",
+    "lang_choose": "🌐 Chọn ngôn ngữ:",
+    "lang_set_ok": "✅ Đã đổi ngôn ngữ.",
+    "farm_ok": "🌾 Bạn đã farm +{gain}. Số dư (mock): {balance}.",
+    "balance_text": "💰 Số dư (mock) của bạn: {balance}",
+    "referral_text": "👥 Link giới thiệu của bạn:\n{link}",
+    "help_text": "❓ Hướng dẫn:\n• 'Farm' để tích điểm (mock)\n• 'Số dư' để xem điểm (mock)\n• 'Giới thiệu' để lấy link mời\n• 'Ngôn ngữ' để đổi ngôn ngữ\n• 'Giới thiệu' để xem lore JIPU",
+    "about_text": "📜 Huyền thoại JIPU: Nó chưa biến mất — chỉ đang ngủ đông."
   },
   "en": {
-    "start": "👋 Welcome to Jipu Bot!",
-    "farm": "You farmed",
-    "balance": "Your balance",
-    "referral": "Referral link",
-    "help": "Bot usage guide",
-    "about": "About this bot",
-    "lang_choose": "Choose a language:"
+    "start": "🚀 JIPU Army is up & running!\n\nWelcome to JIPULAND.",
+    "choose_next": "Choose your next action:",
+    "farm_btn": "🌾 Farm",
+    "balance_btn": "💰 Balance",
+    "referral_btn": "👥 Referral",
+    "help_btn": "❓ Help",
+    "lang_btn": "🌐 Language",
+    "about_btn": "📜 About",
+    "back_menu": "Back to menu",
+    "lang_choose": "🌐 Choose your language:",
+    "lang_set_ok": "✅ Language updated.",
+    "farm_ok": "🌾 You farmed +{gain}. Balance (mock): {balance}.",
+    "balance_text": "💰 Your (mock) balance: {balance}",
+    "referral_text": "👥 Your referral link:\n{link}",
+    "help_text": "❓ Help:\n• 'Farm' to gain points (mock)\n• 'Balance' to view points (mock)\n• 'Referral' to get your invite link\n• 'Language' to change language\n• 'About' to read JIPU lore",
+    "about_text": "📜 The legend of JIPU: It never died — it only sleeps."
   }
 }

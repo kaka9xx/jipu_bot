@@ -1,3 +1,19 @@
-node_modules/
-*.log
-*.env
+# =========================
+# Node.js .gitignore
+# =========================
+
+# Dependencies
+/node_modules/
+
+# Build output
+/dist/
+/build/
+/coverage/
+
+
+# Env files
+.env*
+
+# OS files
+.DS_Store
+Thumbs.db
