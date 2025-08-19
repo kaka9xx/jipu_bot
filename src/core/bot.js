@@ -2,7 +2,7 @@
 const TelegramBot = require("node-telegram-bot-api");
 const { getUserById, addOrUpdateUser } = require("./user");
 const { handleCommand } = require("./commandHandler");
-const { mainMenu } = require("../utils/menu"); // import menu
+const { showMainMenu, showReplyMenu } = require("../utils/menu");
 
 const token = process.env.BOT_TOKEN;
 if (!token) {
@@ -29,42 +29,59 @@ function setupBot(app) {
     }
   });
 
-  // Nhận tin nhắn thường
-  bot.on("message", (msg) => {
+  // Handle /start
+  bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
     const existing = getUserById(chatId);
     const lang = existing?.lang || "en";
+    if (!existing) addOrUpdateUser({ id: chatId, lang });
 
-    if (!existing) {
-      addOrUpdateUser({ id: chatId, lang });
-    }
-
-    // Xử lý command riêng
-    handleCommand(bot, msg, lang);
-
-    // Khi user gõ /start -> hiện menu
-    if (msg.text === "/start") {
-      bot.sendMessage(chatId, "👋 Welcome! Chọn chức năng bên dưới:", mainMenu());
-    }
+    bot.sendMessage(chatId, "👋 Welcome to Farm Bot!");
+    showMainMenu(bot, chatId);
   });
 
-  // Nhận callback từ inline menu
+  // Handle /menu (hiện menu inline)
+  bot.onText(/\/menu/, (msg) => {
+    showMainMenu(bot, msg.chat.id);
+  });
+
+  // Handle /replymenu (bật reply menu)
+  bot.onText(/\/replymenu/, (msg) => {
+    showReplyMenu(bot, msg.chat.id);
+  });
+
+  // Handle message chung
+  bot.on("message", (msg) => {
+    const chatId = msg.chat.id;
+    if (msg.text.startsWith("/")) return; // tránh trùng với lệnh ở trên
+
+    const existing = getUserById(chatId);
+    const lang = existing?.lang || "en";
+    if (!existing) addOrUpdateUser({ id: chatId, lang });
+
+    handleCommand(bot, msg, lang);
+  });
+
+  // Handle callback query (inline keyboard)
   bot.on("callback_query", (query) => {
     const chatId = query.message.chat.id;
     const data = query.data;
 
     switch (data) {
       case "farm":
-        bot.sendMessage(chatId, "🌾 Đây là menu farm của bạn!");
+        bot.sendMessage(chatId, "🌾 You entered the Farm!");
         break;
       case "claim":
-        bot.sendMessage(chatId, "🎁 Bạn đã claim thành công!");
+        bot.sendMessage(chatId, "💰 You claimed your reward!");
         break;
       case "shop":
-        bot.sendMessage(chatId, "🛒 Đây là cửa hàng, hãy chọn vật phẩm.");
+        bot.sendMessage(chatId, "🛒 Welcome to the Shop!");
+        break;
+      case "settings":
+        bot.sendMessage(chatId, "⚙️ Settings menu");
         break;
       default:
-        bot.sendMessage(chatId, "❓ Chức năng chưa hỗ trợ.");
+        bot.sendMessage(chatId, "❓ Unknown option");
     }
 
     bot.answerCallbackQuery(query.id);
