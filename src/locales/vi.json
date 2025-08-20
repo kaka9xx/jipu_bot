@@ -26,5 +26,7 @@
   "btn_buy": "🧾 Mua (demo)",
   "btn_reply_menu": "⌨️ Bật/Tắt Reply Menu",
   "reply_menu_enabled": "✅ Đã bật Reply Menu.",
-  "reply_menu_disabled": "📴 Đã tắt Reply Menu."
+  "reply_menu_disabled": "📴 Đã tắt Reply Menu.",
+  "shop_buy_success": "✅ Bạn đã mua {{name}} giá {{price}} xu. Còn lại: {{coins}} xu",
+  "shop_buy_failed_balance": "⚠️ Không đủ xu. Vật phẩm giá {{price}}, bạn chỉ có {{coins}}."
 }

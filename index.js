@@ -17,6 +17,9 @@ app.get("/", (_, res) => res.send("JIPU bot is alive 🚀"));
 setupBot(app);
 
 const port = process.env.PORT || 10000;
+const adminRouter = require('./src/core/admin');
+app.use('/admin', adminRouter);
+
 app.listen(port, () => {
   console.log(`✅ Server listening on port ${port}`);
 });

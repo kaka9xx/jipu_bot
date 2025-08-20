@@ -26,5 +26,7 @@
   "btn_buy": "🧾 Buy (demo)",
   "btn_reply_menu": "⌨️ Reply Menu",
   "reply_menu_enabled": "✅ Reply Menu enabled.",
-  "reply_menu_disabled": "📴 Reply Menu disabled."
+  "reply_menu_disabled": "📴 Reply Menu disabled.",
+  "shop_buy_success": "✅ You bought {{name}} for {{price}} coins. Remaining coins: {{coins}}",
+  "shop_buy_failed_balance": "⚠️ Not enough coins. Item costs {{price}} but you have {{coins}}."
 }
