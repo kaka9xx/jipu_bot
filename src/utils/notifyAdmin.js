@@ -1,8 +1,7 @@
 // src/utils/notifyAdmin.js
-const fetch = require('node-fetch');
 
 async function notifyAdmin(message) {
-  const chatId = process.env.ADMIN_CHAT_ID;   // chatId Telegram của bạn
+  const chatId = process.env.ADMIN_CHAT_ID;   // chatId Telegram của admin
   const token = process.env.BOT_TOKEN;        // token bot Telegram
 
   if (!chatId || !token) {
@@ -11,7 +10,8 @@ async function notifyAdmin(message) {
   }
 
   try {
-    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    const url = `https://api.telegram.org/bot${token}/sendMessage`;
+    await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
