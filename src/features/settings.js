@@ -30,10 +30,10 @@ function settingsShowLanguage(bot, chatId, lang = "en") {
   bot.sendMessage(chatId, t(lang, "settings_choose_language"), keyboard);
 }
 
-function settingsSetLanguage(bot, chatId, newLang) {
+async function settingsSetLanguage(bot, chatId, newLang) {
   const user = await getUserById(chatId) || { id: chatId, lang: 'en', points: 0 };
   user.lang = newLang;
-  addOrUpdateUser(user);
+  await addOrUpdateUser(user);  // nên thêm await vì có thể là async
   const msg = t(newLang, "settings_lang_updated").replace("{{lang}}", newLang.toUpperCase());
   bot.sendMessage(chatId, msg);
   showMainMenu(bot, chatId, newLang);
