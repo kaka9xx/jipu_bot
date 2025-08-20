@@ -18,7 +18,7 @@ function setupBot(app) {
   const webhookUrl = `${baseUrl}${webhookPath}`;
 
   bot.setWebHook(webhookUrl);
-  console.log("🌐 Webhook set to:", webhookUrl);
+  console.log("🌐 Webhook set to:", ${safeUrl}); //che đi BOT_TOKEN webhook
 
   app.post(webhookPath, (req, res) => {
     try {
