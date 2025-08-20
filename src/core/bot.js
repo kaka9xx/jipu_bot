@@ -65,8 +65,18 @@ function setupBot(app) {
     handleCommand(bot, msg, lang);
   });
 
-  // Handle callback query (inline keyboard)
-  bot.on("callback_query", (query) => { try { return handleMenu(bot, query); } catch (e) { console.error(e); } });
-}
+ // Handle callback query (inline keyboard)
+bot.on("callback_query", async (query) => {
+  try {
+    // Trả lời ngay để tránh lỗi timeout
+    await bot.answerCallbackQuery(query.id);
+
+    // Sau đó mới xử lý menu
+    await handleMenu(bot, query);
+  } catch (e) {
+    console.error("callback_query error:", e);
+  }
+});
+
 
 module.exports = { setupBot };
