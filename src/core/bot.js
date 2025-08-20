@@ -64,7 +64,7 @@ function setupBot(app) {
   });
 
   // Handle callback query (inline keyboard)
-  bot.on("callback_query", (query) => handleMenu(bot, query));
+  bot.on("callback_query", (query) => { try { return handleMenu(bot, query); } catch (e) { console.error(e); } });
 }
 
 module.exports = { setupBot };

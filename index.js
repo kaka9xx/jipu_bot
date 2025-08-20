@@ -1,3 +1,6 @@
+require('dotenv').config();
+const connectDB = require('./src/core/db');
+connectDB();
 // index.js
 require("dotenv").config();
 const express = require("express");

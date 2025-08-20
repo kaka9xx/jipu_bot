@@ -1,37 +1,58 @@
 // src/services/userRepo.js
-const fs = require("fs");
-const path = require("path");
+// Repository layer: use MongoDB (Mongoose) if MONGO_URI is provided; otherwise fall back to file storage.
+const path = require('path');
+const fs = require('fs');
+const storageFile = path.join(__dirname, '../../data/users.json');
 
-const dbPath = path.join(__dirname, "../../users.json");
-
-function load() {
-  if (!fs.existsSync(dbPath)) return { users: [] };
-  return JSON.parse(fs.readFileSync(dbPath, "utf8"));
+let UserModel = null;
+try {
+  UserModel = require('../models/User');
+} catch (e) {
+  UserModel = null;
 }
 
-function save(data) {
-  fs.writeFileSync(dbPath, JSON.stringify(data, null, 2), "utf8");
+async function ensureFile() {
+  if (!fs.existsSync(storageFile)) {
+    fs.mkdirSync(path.dirname(storageFile), { recursive: true });
+    fs.writeFileSync(storageFile, JSON.stringify([], null, 2));
+  }
 }
 
-async function getUserById(id) {
-  const db = load();
-  return db.users.find(u => u.id === id);
+async function getAll() {
+  if (UserModel && process.env.MONGO_URI) {
+    return await UserModel.find({}).lean();
+  } else {
+    await ensureFile();
+    const raw = fs.readFileSync(storageFile, 'utf-8');
+    return JSON.parse(raw || '[]');
+  }
 }
 
-async function createUser(user) {
-  const db = load();
-  db.users.push(user);
-  save(db);
-  return user;
+async function getById(id) {
+  if (UserModel && process.env.MONGO_URI) {
+    return await UserModel.findOne({ id });
+  } else {
+    await ensureFile();
+    const all = JSON.parse(fs.readFileSync(storageFile, 'utf-8') || '[]');
+    return all.find(u => u.id === id) || null;
+  }
 }
 
-async function updateUser(id, updates) {
-  const db = load();
-  const idx = db.users.findIndex(u => u.id === id);
-  if (idx === -1) return null;
-  db.users[idx] = { ...db.users[idx], ...updates };
-  save(db);
-  return db.users[idx];
+async function upsert(user) {
+  if (UserModel && process.env.MONGO_URI) {
+    return await UserModel.findOneAndUpdate({ id: user.id }, { $set: user }, { upsert: true, new: true });
+  } else {
+    await ensureFile();
+    const all = JSON.parse(fs.readFileSync(storageFile, 'utf-8') || '[]');
+    const idx = all.findIndex(u => u.id === user.id);
+    if (idx >= 0) {
+      all[idx] = { ...all[idx], ...user };
+    } else {
+      all.push(user);
+    }
+    fs.writeFileSync(storageFile, JSON.stringify(all, null, 2), 'utf-8');
+    return user;
+  }
 }
 
-module.exports = { getUserById, createUser, updateUser };
+module.exports = { getAll, getById, upsert };

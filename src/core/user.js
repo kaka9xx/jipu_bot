@@ -1,25 +1,17 @@
 // src/core/user.js
-const path = require("path");
-const { readJSON, writeJSON } = require("../utils/storage");
+// Adapter used by rest of app: wrap service functions and keep synchronous-friendly API
+const userService = require('../services/userService');
 
-const USERS_FILE = path.join(__dirname, "../../data/users.json");
-
-function getAllUsers() {
-  return readJSON(USERS_FILE, []);
+async function getUserById(id) {
+  return await userService.getUserById(id);
 }
 
-function getUserById(id) {
-  const users = getAllUsers();
-  return users.find(u => u.id === id);
+async function addOrUpdateUser(user) {
+  return await userService.createOrUpdateUser(user);
 }
 
-function addOrUpdateUser(user) {
-  const users = getAllUsers();
-  const idx = users.findIndex(u => u.id === user.id);
-  if (idx >= 0) users[idx] = { ...users[idx], ...user };
-  else users.push(user);
-  writeJSON(USERS_FILE, users);
-  return user;
+async function getAllUsers() {
+  return await userService.getAllUsers();
 }
 
-module.exports = { getAllUsers, getUserById, addOrUpdateUser };
+module.exports = { getUserById, addOrUpdateUser, getAllUsers };

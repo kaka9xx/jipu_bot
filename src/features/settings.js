@@ -1,5 +1,5 @@
 const { t } = require("../i18n");
-const { getUserById, addOrUpdateUser } = require("../core/user");
+const { getUserById, addOrUpdateUser } = require('../core/user');
 const { showMainMenu, replyMenu } = require("../utils/menu");
 
 function settingsLogic(bot, chatId, lang = "en") {
@@ -31,7 +31,7 @@ function settingsShowLanguage(bot, chatId, lang = "en") {
 }
 
 function settingsSetLanguage(bot, chatId, newLang) {
-  const user = getUserById(chatId) || { id: chatId, lang: "en", points: 0 };
+  const user = await getUserById(chatId) || { id: chatId, lang: 'en', points: 0 };
   user.lang = newLang;
   addOrUpdateUser(user);
   const msg = t(newLang, "settings_lang_updated").replace("{{lang}}", newLang.toUpperCase());
@@ -39,10 +39,10 @@ function settingsSetLanguage(bot, chatId, newLang) {
   showMainMenu(bot, chatId, newLang);
 }
 
-function settingsToggleReplyMenu(bot, chatId) {
-  const user = getUserById(chatId) || { id: chatId, lang: "en", points: 0 };
+async function settingsToggleReplyMenu(bot, chatId) {
+  const user = await getUserById(chatId) || { id: chatId, lang: 'en', points: 0 };
   user.replyMenu = !user.replyMenu;
-  addOrUpdateUser(user);
+  await addOrUpdateUser(user);
   const lang = user.lang || "en";
 
   if (user.replyMenu) {
