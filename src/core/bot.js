@@ -16,9 +16,11 @@ function setupBot(app) {
   const baseUrl = process.env.RENDER_EXTERNAL_URL || "";
   const webhookPath = `/webhook/${token}`;
   const webhookUrl = `${baseUrl}${webhookPath}`;
+  // Tạo bản log an toàn: ẩn phần sau dấu ":" trong token
+  const safeUrl = webhookUrl.replace(/\/(\d+):[A-Za-z0-9_-]+/, '/$1:****');
 
   bot.setWebHook(webhookUrl);
-  console.log("🌐 Webhook set to:", ${safeUrl}); //che đi BOT_TOKEN webhook
+  console.log("🌐 Webhook set to:", safeUrl); // log không lộ token
 
   app.post(webhookPath, (req, res) => {
     try {
