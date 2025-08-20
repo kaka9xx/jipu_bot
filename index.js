@@ -23,3 +23,7 @@ app.use('/admin', adminRouter);
 app.listen(port, () => {
   console.log(`✅ Server listening on port ${port}`);
 });
+
+// xử lý lỗi & sự kiện
+const initErrorHandler = require('./src/core/errorHandler');
+initErrorHandler(); 
