@@ -78,5 +78,6 @@ bot.on("callback_query", async (query) => {
   }
 });
 
+}
 
 module.exports = { setupBot };
