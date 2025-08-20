@@ -4,3 +4,4 @@ module.exports = {
   description: "Claim and reset points",
   execute: (bot, msg, lang) => claimLogic(bot, msg.chat.id, lang)
 };
+
