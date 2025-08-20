@@ -1,13 +1,8 @@
-const { saveUser } = require('../services/userService');
+const { startFeature } = require("../features/info");
 
 module.exports = {
-  name: 'start',
-  async execute(msg) {
-    const userId = msg.from?.id;
-
-    // lưu user lần đầu
-    await saveUser(userId, { locale: 'en' }); // mặc định English
-
-    await msg.reply(msg.t('welcome_message'));
+  name: "start",
+  async execute(bot, msg) {
+    await startFeature(bot, msg);
   },
 };
