@@ -5,69 +5,54 @@ const { farmLogic } = require("../features/farm");
 const { claimLogic } = require("../features/claim");
 const { shopLogic } = require("../features/shop");
 const { settingsLogic, settingsShowLanguage } = require("../features/settings");
-const { helpFeature } = require("../features/help");
 
 /**
- * Xử lý các lệnh người dùng gõ trực tiếp (/help, /farm, /shop, ...)
- * @param {TelegramBot} bot - instance bot
- * @param {Object} msg - message từ Telegram
- * @param {string} lang - ngôn ngữ của user (ví dụ: 'en', 'vi')
+ * Xử lý command của user
+ * @param {TelegramBot} bot
+ * @param {object} msg
+ * @param {string} lang - ngôn ngữ user
  */
 function handleCommand(bot, msg, lang) {
   const chatId = msg.chat.id;
   const text = (msg.text || "").trim();
 
-  // 👉 Lệnh /help
-  if (text.startsWith("/help")) {
-    helpFeature(bot, msg, chatId, lang);
-    return;
-  }
+  switch (true) {
+    case text.startsWith("/help"):
+      bot.sendMessage(chatId, t(lang, "help_message"));
+      break;
 
-  // 👉 Lệnh /echo <text>
-  if (text.startsWith("/echo")) {
-    const rest = text.replace("/echo", "").trim();
-    bot.sendMessage(chatId, rest || t(lang, "echo_empty"));
-    return;
-  }
+    case text.startsWith("/echo"):
+      const rest = text.replace("/echo", "").trim();
+      bot.sendMessage(chatId, rest || t(lang, "echo_empty"));
+      break;
 
-  // 👉 Lệnh /menu
-  if (text.startsWith("/menu")) {
-    showMainMenu(bot, chatId, lang);
-    return;
-  }
+    case text.startsWith("/menu"):
+      showMainMenu(bot, chatId, lang);
+      break;
 
-  // 👉 Lệnh /farm
-  if (text.startsWith("/farm")) {
-    farmLogic(bot, chatId, lang);
-    return;
-  }
+    case text.startsWith("/farm"):
+      farmLogic(bot, chatId, lang);
+      break;
 
-  // 👉 Lệnh /claim
-  if (text.startsWith("/claim")) {
-    claimLogic(bot, chatId, lang);
-    return;
-  }
+    case text.startsWith("/claim"):
+      claimLogic(bot, chatId, lang);
+      break;
 
-  // 👉 Lệnh /shop
-  if (text.startsWith("/shop")) {
-    shopLogic(bot, chatId, lang);
-    return;
-  }
+    case text.startsWith("/shop"):
+      shopLogic(bot, chatId, lang);
+      break;
 
-  // 👉 Lệnh /language (hiện menu chọn ngôn ngữ)
-  if (text.startsWith("/language")) {
-    settingsShowLanguage(bot, chatId, lang);
-    return;
-  }
+    case text.startsWith("/language"):
+      settingsShowLanguage(bot, chatId, lang);
+      break;
 
-  // 👉 Lệnh /settings
-  if (text.startsWith("/settings")) {
-    settingsLogic(bot, chatId, lang);
-    return;
-  }
+    case text.startsWith("/settings"):
+      settingsLogic(bot, chatId, lang);
+      break;
 
-  // 👉 Nếu không khớp lệnh nào
-  bot.sendMessage(chatId, t(lang, "unknown_command"));
+    default:
+      bot.sendMessage(chatId, t(lang, "unknown_command"));
+  }
 }
 
 module.exports = { handleCommand };

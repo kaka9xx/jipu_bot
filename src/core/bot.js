@@ -2,13 +2,30 @@
 const TelegramBot = require("node-telegram-bot-api");
 const { startFeature } = require("../features/start");
 const { helpFeature } = require("../features/help");
+
 const { handleCommand } = require("./commandHandler");
 const { handleMenu } = require("./menuHandler");
+const { getUserById } = require("./user");
 
 const token = process.env.BOT_TOKEN;
-if (!token) throw new Error("Missing BOT_TOKEN");
+if (!token) throw new Error("❌ Missing BOT_TOKEN");
 
 const bot = new TelegramBot(token, { webHook: true });
+
+/**
+ * Helper: luôn lấy user.lang từ DB rồi mới gọi handler
+ */
+function withUserLang(handler) {
+  return async (payload) => {
+    const chatId = payload.message?.chat?.id || payload.chat?.id;
+    if (!chatId) return;
+
+    const user = await getUserById(chatId);
+    const lang = user?.lang || process.env.DEFAULT_LANG || "en";
+
+    handler(payload, chatId, lang);
+  };
+}
 
 function setupBot(app) {
   const baseUrl = process.env.RENDER_EXTERNAL_URL || "";
@@ -17,27 +34,28 @@ function setupBot(app) {
   bot.setWebHook(webhookUrl);
 
   app.post(webhookPath, (req, res) => {
-    const lang = req.userLang || "en"; // 👈 lấy từ middleware lang.js
-    bot.processUpdate({ ...req.body, _lang: lang });
+    bot.processUpdate(req.body);
     res.sendStatus(200);
   });
 
-  // 👉 Gọi sang features, kèm ngôn ngữ
-  bot.onText(/\/start/, (msg) =>
-    startFeature(bot, msg, msg.chat.id, msg._lang || "en")
-  );
+  // ✅ Đăng ký các command
+  bot.onText(/\/start/, withUserLang((msg, chatId, lang) => {
+    startFeature(bot, msg, chatId, lang);
+  }));
 
-  bot.onText(/\/help/, (msg) =>
-    helpFeature(bot, msg, msg.chat.id, msg._lang || "en")
-  );
+  bot.onText(/\/help/, withUserLang((msg, chatId, lang) => {
+    helpFeature(bot, msg, chatId, lang);
+  }));
 
-  bot.on("message", (msg) =>
-    handleCommand(bot, msg, msg._lang || "en")
-  );
+  // ✅ Tin nhắn thường
+  bot.on("message", withUserLang((msg, chatId, lang) => {
+    handleCommand(bot, msg, lang);
+  }));
 
-  bot.on("callback_query", (query) =>
-    handleMenu(bot, query, query._lang || "en")
-  );
+  // ✅ Menu callback
+  bot.on("callback_query", withUserLang((query, chatId, lang) => {
+    handleMenu(bot, query, lang);
+  }));
 }
 
 module.exports = { setupBot };
