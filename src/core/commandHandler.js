@@ -10,12 +10,6 @@ function handleCommand(bot, msg, lang) {
   const chatId = msg.chat.id;
   const text = (msg.text || "").trim();
 
-  if (text.startsWith("/start")) {
-    bot.sendMessage(chatId, t(lang, "welcome_message"));
-    showMainMenu(bot, chatId, lang);
-    return;
-  }
-
   if (text.startsWith("/help")) {
     bot.sendMessage(chatId, t(lang, "help_message"));
     return;
@@ -27,7 +21,6 @@ function handleCommand(bot, msg, lang) {
     return;
   }
 
-  // New: menu & features commands
   if (text.startsWith("/menu")) {
     showMainMenu(bot, chatId, lang);
     return;
@@ -49,9 +42,6 @@ function handleCommand(bot, msg, lang) {
   }
 
   if (text.startsWith("/language")) {
-    // open language picker
-    const chatId = msg.chat.id;
-    const lang = lang || "en";
     const { settingsShowLanguage } = require("../features/settings");
     settingsShowLanguage(bot, chatId, lang);
     return;
@@ -62,6 +52,7 @@ function handleCommand(bot, msg, lang) {
     return;
   }
 
+  // Nếu không khớp lệnh nào
   bot.sendMessage(chatId, t(lang, "unknown_command"));
 }
 

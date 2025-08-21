@@ -15,8 +15,9 @@ async function startFeature(bot, msg, chatId) {
     });
   }
 
-  // Ghép intro từ các key trong locales
+  // Intro text
   const intro = [
+    "👋 " + t(lang, "about"), // thêm key i18n riêng cho dòng chào
     t(lang, "welcome"),
     t(lang, "about"),
     t(lang, "features"),
@@ -28,8 +29,9 @@ async function startFeature(bot, msg, chatId) {
     console.error("❌ Failed to send intro:", err.message);
   }
 
-  // Hiện main menu
-  showMainMenu(bot, chatId);
+  // Gọi main menu, nhớ truyền lang
+  showMainMenu(bot, chatId, lang);
 }
 
 module.exports = { startFeature };
+
