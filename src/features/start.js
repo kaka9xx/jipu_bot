@@ -4,11 +4,13 @@ const { showMainMenu } = require("../utils/menu");
 const { t } = require("../i18n");
 
 async function startFeature(bot, msg, chatId) {
-  let user = getUserById(chatId);
-  const lang = user?.lang || "en";
+  // ✅ phải await vì getUserById là async
+  let user = await getUserById(chatId);
+  let lang = user?.lang || "en";
 
   if (!user) {
-    user = addOrUpdateUser({
+    // ✅ thêm await khi lưu user mới
+    user = await addOrUpdateUser({
       id: chatId,
       lang,
       username: msg.from?.username,
@@ -16,12 +18,12 @@ async function startFeature(bot, msg, chatId) {
     });
   }
 
-  // Intro text
+  // Intro text (sử dụng i18n)
   const intro = [
-    "👋 " + t(lang, "welcome"), // thêm key i18n riêng cho dòng chào
-            t(lang, "about"),
-            t(lang, "features"),
-            t(lang, "links"),
+    "👋 " + t(lang, "welcome"), // key: "welcome": "Welcome to JIPU bot!"
+    t(lang, "about"),
+    t(lang, "features"),
+    t(lang, "links"),
   ].join("\n\n");
 
   try {
@@ -30,9 +32,8 @@ async function startFeature(bot, msg, chatId) {
     console.error("❌ Failed to send intro:", err.message);
   }
 
-  // Gọi main menu, nhớ truyền lang
+  // ✅ Gọi main menu với ngôn ngữ đã lấy từ DB
   showMainMenu(bot, chatId, lang);
 }
 
 module.exports = { startFeature };
-
