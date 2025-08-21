@@ -40,7 +40,14 @@ async function getById(id) {
 
 async function upsert(user) {
   if (UserModel && process.env.MONGO_URI) {
-    return await UserModel.findOneAndUpdate({ id: user.id }, { $set: user }, { upsert: true, new: true });
+    // ⚡ Loại bỏ _id để tránh duplicate key
+    const { _id, ...safeUser } = user;
+
+    return await UserModel.findOneAndUpdate(
+      { id: user.id },
+      { $set: safeUser },
+      { upsert: true, new: true }
+    );
   } else {
     await ensureFile();
     const all = JSON.parse(fs.readFileSync(storageFile, 'utf-8') || '[]');
