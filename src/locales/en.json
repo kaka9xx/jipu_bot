@@ -48,5 +48,9 @@
     "claim": "Claim your rewards",
     "shop": "Open the shop",
     "settings": "Change your settings"
-  }
+  },"menu_main": "Main menu",
+  "reply_menu_on": "Reply menu enabled.",
+  "reply_menu_off": "Reply menu disabled.",
+  "unknown_command": "I don't understand that command.",
+  "echo_empty": "You didn’t type anything to echo."
 }

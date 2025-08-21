@@ -48,5 +48,10 @@
     "claim": "Nhận thưởng",
     "shop": "Mở cửa hàng",
     "settings": "Đổi cài đặt"
-  }
+  },
+   "menu_main": "Menu chính",
+  "reply_menu_on": "Đã bật bàn phím trả lời.",
+  "reply_menu_off": "Đã tắt bàn phím trả lời.",
+  "unknown_command": "Không hiểu lệnh này.",
+  "echo_empty": "Bạn chưa nhập nội dung để lặp lại."
 }

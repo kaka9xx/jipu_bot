@@ -11,11 +11,13 @@ async function langMiddleware(req, res, next) {
       req.body?.callback_query?.from?.id;
 
     let lang = DEFAULT_LANG;
+    let user = null;
 
     if (chatId) {
-      const user = await getUserById(chatId);
+      user = await getUserById(chatId);
+
       if (user?.lang && SUPPORTED_LANGS.includes(user.lang)) {
-        lang = user.lang;
+        lang = user.lang; // ⚡ Ưu tiên DB
       } else {
         const tgLang =
           req.body?.message?.from?.language_code ||
@@ -28,9 +30,11 @@ async function langMiddleware(req, res, next) {
     }
 
     req.userLang = lang;
+    req.dbUser = user; // ⚡ Truyền luôn user xuống
   } catch (err) {
     console.error("Lang middleware error:", err.message);
     req.userLang = DEFAULT_LANG;
+    req.dbUser = null;
   }
 
   next();

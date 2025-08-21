@@ -28,42 +28,37 @@ async function settingsShowLanguage(bot, chatId, lang = "en") {
       inline_keyboard: [
         [{ text: "🇺🇸 English", callback_data: "set_lang_en" }],
         [{ text: "🇻🇳 Tiếng Việt", callback_data: "set_lang_vi" }],
-        [{ text:  t(lang, "btn_back"), callback_data: "settings" }],
+        [{ text: t(lang, "btn_back"), callback_data: "settings" }],
       ],
     },
   });
 }
 
 async function settingsSetLanguage(bot, chatId, newLang) {
-  const user = await getUserById(chatId);
+  let user = await getUserById(chatId);
+  if (!user) user = { id: chatId };
+
   await addOrUpdateUser({ ...user, lang: newLang });
+
   await bot.sendMessage(chatId, t(newLang, "lang_updated"));
   await settingsLogic(bot, chatId, newLang);
 }
 
-/**
- * Toggle Reply Menu ON/OFF
- */
 async function settingsToggleReplyMenu(bot, chatId) {
-  const user = await getUserById(chatId);
-  const lang = user?.lang || "en";
-
-  // Nếu user chưa có thì tạo mới
+  let user = await getUserById(chatId);
   if (!user) {
-    await addOrUpdateUser({ id: chatId, lang });
+    user = { id: chatId, lang: "en", replyMenu: false };
   }
 
-  // Kiểm tra trạng thái replyMenu
-  const replyMode = user?.replyMenu || false;
+  const lang = user.lang || "en";
+  const newState = !user.replyMenu;
 
-  if (!replyMode) {
-    // Bật reply menu
-    await addOrUpdateUser({ ...user, replyMenu: true });
+  await addOrUpdateUser({ ...user, replyMenu: newState });
+
+  if (newState) {
     await bot.sendMessage(chatId, t(lang, "reply_menu_on"));
     showReplyMenu(bot, chatId, lang);
   } else {
-    // Tắt reply menu, quay về inline menu
-    await addOrUpdateUser({ ...user, replyMenu: false });
     await bot.sendMessage(chatId, t(lang, "reply_menu_off"));
     showMainMenu(bot, chatId, lang);
   }

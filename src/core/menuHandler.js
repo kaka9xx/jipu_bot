@@ -1,4 +1,3 @@
-const { getUserById } = require("./user");
 const { farmLogic } = require("../features/farm");
 const { claimLogic } = require("../features/claim");
 const { shopLogic, shopShowItem, shopBuyDemo } = require("../features/shop");
@@ -9,21 +8,14 @@ const {
   settingsToggleReplyMenu,
 } = require("../features/settings");
 const { showMainMenu } = require("../utils/menu");
-const { helpFeature } = require("../features/help"); // ✅ import helpFeature
+const { helpFeature } = require("../features/help");
 
-async function handleMenu(bot, query) {
+// ✅ mới
+async function handleMenu(bot, query, lang) {
   const chatId = query.message.chat.id;
-
-  // lấy user từ DB
-  let user = await getUserById(chatId);
-  if (!user) {
-    user = { id: chatId, lang: "en", points: 0 };
-  }
-
-  const lang = user.lang || "en";
   const data = query.data || "";
 
-  // 👉 Pattern handlers (xử lý callback có prefix)
+  // 👉 Pattern handlers
   if (data.startsWith("shop_item_")) {
     const itemId = data.replace("shop_item_", "");
     await shopShowItem(bot, chatId, lang, itemId);
@@ -36,7 +28,6 @@ async function handleMenu(bot, query) {
     return bot.answerCallbackQuery(query.id, { text: "🧾 Purchased (demo)" });
   }
 
-  // 👉 Các callback cụ thể
   switch (data) {
     case "farm":
       await farmLogic(bot, chatId, lang);
@@ -46,7 +37,7 @@ async function handleMenu(bot, query) {
       await claimLogic(bot, chatId, lang);
       break;
 
-    case "help": // ✅ đồng bộ với /help
+    case "help":
       await helpFeature(bot, query.message, chatId, lang);
       break;
 
@@ -82,7 +73,6 @@ async function handleMenu(bot, query) {
       await bot.sendMessage(chatId, "❓ Unknown option");
   }
 
-  // 👉 Luôn trả callback query để tránh Telegram báo lỗi
   await bot.answerCallbackQuery(query.id);
 }
 
