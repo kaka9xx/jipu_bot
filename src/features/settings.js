@@ -56,13 +56,18 @@ async function settingsToggleReplyMenu(bot, chatId) {
   await addOrUpdateUser({ ...user, replyMenu: newState });
 
   if (newState) {
+    // Bật reply menu
     await bot.sendMessage(chatId, t(lang, "reply_menu_on"));
     showReplyMenu(bot, chatId, lang);
   } else {
-    await bot.sendMessage(chatId, t(lang, "reply_menu_off"));
+    // Tắt reply menu + remove keyboard
+    await bot.sendMessage(chatId, t(lang, "reply_menu_off"), {
+      reply_markup: { remove_keyboard: true }
+    });
     showMainMenu(bot, chatId, lang);
   }
 }
+
 
 module.exports = {
   settingsLogic,
