@@ -1,12 +1,13 @@
 // src/services/userRepo.js
 // Repository layer: use MongoDB (Mongoose) if MONGO_URI is provided; otherwise fall back to file storage.
-const path = require('path');
-const fs = require('fs');
-const storageFile = path.join(__dirname, '../../data/users.json');
+
+const path = require("path");
+const fs = require("fs");
+const storageFile = path.join(__dirname, "../../data/users.json");
 
 let UserModel = null;
 try {
-  UserModel = require('../models/User');
+  UserModel = require("../models/User");
 } catch (e) {
   UserModel = null;
 }
@@ -23,41 +24,42 @@ async function getAll() {
     return await UserModel.find({}).lean();
   } else {
     await ensureFile();
-    const raw = fs.readFileSync(storageFile, 'utf-8');
-    return JSON.parse(raw || '[]');
+    const raw = fs.readFileSync(storageFile, "utf-8");
+    return JSON.parse(raw || "[]");
   }
 }
 
 async function getById(id) {
   if (UserModel && process.env.MONGO_URI) {
-    return await UserModel.findOne({ id });
+    return await UserModel.findOne({ id }).lean();
   } else {
     await ensureFile();
-    const all = JSON.parse(fs.readFileSync(storageFile, 'utf-8') || '[]');
-    return all.find(u => u.id === id) || null;
+    const all = JSON.parse(fs.readFileSync(storageFile, "utf-8") || "[]");
+    return all.find((u) => u.id === id) || null;
   }
 }
 
 async function upsert(user) {
   if (UserModel && process.env.MONGO_URI) {
-    // ⚡ Loại bỏ _id để tránh duplicate key
-    const { _id, ...safeUser } = user;
+    // Chuyển về object thuần, loại bỏ _id để tránh lỗi duplicate key
+    const plain = user.toObject ? user.toObject() : { ...user };
+    delete plain._id;
 
     return await UserModel.findOneAndUpdate(
-      { id: user.id },
-      { $set: safeUser },
+      { id: plain.id },
+      { $set: plain },
       { upsert: true, new: true }
-    );
+    ).lean();
   } else {
     await ensureFile();
-    const all = JSON.parse(fs.readFileSync(storageFile, 'utf-8') || '[]');
-    const idx = all.findIndex(u => u.id === user.id);
+    const all = JSON.parse(fs.readFileSync(storageFile, "utf-8") || "[]");
+    const idx = all.findIndex((u) => u.id === user.id);
     if (idx >= 0) {
       all[idx] = { ...all[idx], ...user };
     } else {
       all.push(user);
     }
-    fs.writeFileSync(storageFile, JSON.stringify(all, null, 2), 'utf-8');
+    fs.writeFileSync(storageFile, JSON.stringify(all, null, 2), "utf-8");
     return user;
   }
 }
