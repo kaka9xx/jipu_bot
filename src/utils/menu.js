@@ -13,6 +13,9 @@ function mainMenu(lang = "en") {
           { text: t(lang, "btn_shop"), callback_data: "shop" },
           { text: t(lang, "btn_settings"), callback_data: "settings" },
         ],
+         [
+          { text: t(lang, "btn_help"), callback_data: "help" }, // ✅ thêm dòng này
+        ],
       ],
     },
   };

@@ -17,7 +17,7 @@ async function startFeature(bot, msg, chatId) {
 
   // Ghép intro từ các key trong locales
   const intro = [
-    t(lang, "welcome_message"),
+    t(lang, "welcome"),
     t(lang, "about"),
     t(lang, "features"),
   ].join("\n\n");

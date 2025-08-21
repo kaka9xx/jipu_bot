@@ -33,6 +33,9 @@ async function handleMenu(bot, query) {
     case 'claim':
       await claimLogic(bot, chatId, lang);
       break;
+    case 'help': // ✅ thêm block này
+      await bot.sendMessage(chatId, t(lang, "help_message"));
+      break;
     case 'shop':
       await shopLogic(bot, chatId, lang);
       break;
