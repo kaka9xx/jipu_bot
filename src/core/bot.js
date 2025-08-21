@@ -2,7 +2,6 @@
 const TelegramBot = require("node-telegram-bot-api");
 const { startFeature } = require("../features/start");
 const { helpFeature } = require("../features/help");
-
 const { handleCommand } = require("./commandHandler");
 const { handleMenu } = require("./menuHandler");
 
@@ -18,15 +17,27 @@ function setupBot(app) {
   bot.setWebHook(webhookUrl);
 
   app.post(webhookPath, (req, res) => {
-    bot.processUpdate(req.body);
+    const lang = req.userLang || "en"; // 👈 lấy từ middleware lang.js
+    bot.processUpdate({ ...req.body, _lang: lang });
     res.sendStatus(200);
   });
 
-  // 👉 Chỉ gọi sang features
-  bot.onText(/\/start/, (msg) => startFeature(bot, msg, msg.chat.id));
-  bot.onText(/\/help/, (msg) => helpFeature(bot, msg, msg.chat.id));
-  bot.on("message", (msg) => handleCommand(bot, msg));
-  bot.on("callback_query", (query) => handleMenu(bot, query));
+  // 👉 Gọi sang features, kèm ngôn ngữ
+  bot.onText(/\/start/, (msg) =>
+    startFeature(bot, msg, msg.chat.id, msg._lang || "en")
+  );
+
+  bot.onText(/\/help/, (msg) =>
+    helpFeature(bot, msg, msg.chat.id, msg._lang || "en")
+  );
+
+  bot.on("message", (msg) =>
+    handleCommand(bot, msg, msg._lang || "en")
+  );
+
+  bot.on("callback_query", (query) =>
+    handleMenu(bot, query, query._lang || "en")
+  );
 }
 
 module.exports = { setupBot };

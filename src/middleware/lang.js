@@ -16,13 +16,21 @@ async function langMiddleware(req, res, next) {
       const user = await getUserById(chatId);
       if (user?.lang && SUPPORTED_LANGS.includes(user.lang)) {
         lang = user.lang;
+      } else {
+        const tgLang =
+          req.body?.message?.from?.language_code ||
+          req.body?.callback_query?.from?.language_code;
+
+        if (tgLang && SUPPORTED_LANGS.includes(tgLang)) {
+          lang = tgLang;
+        }
       }
     }
 
-    req.lang = lang;
+    req.userLang = lang;
   } catch (err) {
-    console.error("Lang middleware error:", err);
-    req.lang = DEFAULT_LANG;
+    console.error("Lang middleware error:", err.message);
+    req.userLang = DEFAULT_LANG;
   }
 
   next();

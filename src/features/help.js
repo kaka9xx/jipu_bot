@@ -1,17 +1,17 @@
 // src/features/help.js
-function helpFeature(bot, msg, chatId) {
-  const text = `
-🤖 *Hướng dẫn sử dụng bot:*
+// 👉 Tách riêng logic xử lý /help để có thể tái sử dụng cho cả lệnh và menu
 
-/start - Bắt đầu
-/help - Xem hướng dẫn
-/farm - Trồng cây
-/claim - Nhận thưởng hằng ngày
-/shop - Mua sắm trong shop
-/settings - Cài đặt ngôn ngữ, tuỳ chọn
-`;
+const { t } = require("../i18n");
 
-  bot.sendMessage(chatId, text, { parse_mode: "Markdown" });
+/**
+ * Hiển thị nội dung trợ giúp cho người dùng
+ * @param {TelegramBot} bot - instance bot
+ * @param {Object} msg - object message từ Telegram
+ * @param {Number} chatId - id của cuộc trò chuyện
+ * @param {String} lang - ngôn ngữ của user
+ */
+async function helpFeature(bot, msg, chatId, lang = "en") {
+  await bot.sendMessage(chatId, t(lang, "help_message"));
 }
 
 module.exports = { helpFeature };
