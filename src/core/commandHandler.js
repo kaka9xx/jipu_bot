@@ -1,5 +1,6 @@
 // src/core/commandHandler.js
 const { t } = require("../i18n");
+const { getLang } = require("./lang");
 const { showMainMenu } = require("../utils/menu");
 const { startFeature } = require("../features/start");
 const { helpFeature } = require("../features/help");
@@ -11,10 +12,10 @@ const { settingsLogic, settingsShowLanguage } = require("../features/settings");
 /**
  * Xử lý tất cả command từ user
  */
-function handleCommand(bot, msg) {
+async function handleCommand(bot, msg) {
   const chatId = msg.chat.id;
   const text = (msg.text || "").trim();
-  const lang = msg.userLang || "en"; // gắn từ middleware
+  const lang = await getLang(chatId, msg);
 
   if (text.startsWith("/start")) {
     return startFeature(bot, msg, chatId);

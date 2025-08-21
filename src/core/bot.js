@@ -8,14 +8,10 @@ if (!token) throw new Error("❌ Missing BOT_TOKEN");
 
 const bot = new TelegramBot(token, { webHook: true });
 
-/**
- * Setup bot với webhook (Render/Heroku...)
- */
 function setupBot(app) {
   const baseUrl = process.env.RENDER_EXTERNAL_URL || "";
   const webhookPath = `/webhook/${token}`;
   const webhookUrl = `${baseUrl}${webhookPath}`;
-
   bot.setWebHook(webhookUrl);
 
   app.post(webhookPath, (req, res) => {
@@ -23,10 +19,8 @@ function setupBot(app) {
     res.sendStatus(200);
   });
 
-  // 👉 Toàn bộ lệnh xử lý trong commandHandler
+  // 👉 chỉ đăng ký 1 lần, không vòng lặp
   bot.on("message", (msg) => handleCommand(bot, msg));
-
-  // 👉 Callback từ inline keyboard/menu
   bot.on("callback_query", (query) => handleMenu(bot, query));
 }
 
