@@ -39,12 +39,14 @@
   "features": "🌱 *Tính năng*\n- Farm token tự động\n- Stake & nhận thưởng\n- Cập nhật theo thời gian thực",
   "commands": "💡 *Lệnh*\n/start - Bắt đầu\n/menu - Hiện menu chính\n/help - Hướng dẫn & hỗ trợ",
   "links": "🌐 *Website*\n👉 https://jipu.app\n\n📢 *Tin tức*\n👉 https://t.me/jipuCoin",
-  "help_title": "Trợ giúp",
-  "help_usage": "Bạn có thể dùng các lệnh sau:",
-  "help_start": "Khởi động bot",
-  "help_menu": "Hiện menu chính",
-  "help_farm": "Vào trang trại",
-  "help_claim": "Nhận thưởng",
-  "help_shop": "Mở cửa hàng",
-  "help_settings": "Đổi cài đặt"
+  "help": {
+    "title": "Trợ giúp",
+    "usage": "Bạn có thể dùng các lệnh sau:",
+    "start": "Khởi động bot",
+    "menu": "Hiện menu chính",
+    "farm": "Vào trang trại",
+    "claim": "Nhận thưởng",
+    "shop": "Mở cửa hàng",
+    "settings": "Đổi cài đặt"
+  }
 }

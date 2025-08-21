@@ -4,26 +4,28 @@ const { t } = require("../i18n");
 
 /**
  * Xử lý lệnh /help
- * @param {TelegramBot} bot - instance của bot
- * @param {Object} msg - message Telegram gửi đến
- * @param {number} chatId - ID của user/chat
+ * @param {TelegramBot} bot - instance bot
+ * @param {Object} msg - message từ Telegram
+ * @param {number} chatId - ID chat
  */
 async function helpFeature(bot, msg, chatId) {
-  // ✅ lấy user từ DB (async)
+  // Lấy user từ DB
   const user = await getUserById(chatId);
   const lang = user?.lang || "en";
 
-  // ✅ nội dung help lấy từ i18n
-  const helpText = [
-    "ℹ️ " + t(lang, "help_title"),     // Ví dụ: "Help / Trợ giúp"
-    t(lang, "help_usage"),            // "Bạn có thể dùng các lệnh sau:"
-    "/start - " + t(lang, "help_start"),
-    "/menu - " + t(lang, "help_menu"),
-    "/farm - " + t(lang, "help_farm"),
-    "/claim - " + t(lang, "help_claim"),
-    "/shop - " + t(lang, "help_shop"),
-    "/settings - " + t(lang, "help_settings"),
-  ].join("\n");
+  // Soạn nội dung help từ i18n
+  const helpLines = [
+    "ℹ️ " + t(lang, "help.title"),
+    t(lang, "help.usage"),
+    "/start - " + t(lang, "help.start"),
+    "/menu - " + t(lang, "help.menu"),
+    "/farm - " + t(lang, "help.farm"),
+    "/claim - " + t(lang, "help.claim"),
+    "/shop - " + t(lang, "help.shop"),
+    "/settings - " + t(lang, "help.settings"),
+  ];
+
+  const helpText = helpLines.join("\n");
 
   try {
     await bot.sendMessage(chatId, helpText, { parse_mode: "Markdown" });
