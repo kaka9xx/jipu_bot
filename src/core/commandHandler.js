@@ -1,61 +1,61 @@
 // src/core/commandHandler.js
 const { t } = require("../i18n");
-const { getLang } = require("./lang");
 const { showMainMenu } = require("../utils/menu");
-const { startFeature } = require("../features/start");
-const { helpFeature } = require("../features/help");
 const { farmLogic } = require("../features/farm");
 const { claimLogic } = require("../features/claim");
 const { shopLogic } = require("../features/shop");
-const { settingsLogic, settingsShowLanguage } = require("../features/settings");
+const { settingsLogic } = require("../features/settings");
+const { helpFeature } = require("../features/help");
 
-/**
- * Xử lý tất cả command từ user
- */
-async function handleCommand(bot, msg) {
+async function handleCommand(bot, msg, lang) {
   const chatId = msg.chat.id;
   const text = (msg.text || "").trim();
-  const lang = await getLang(chatId, msg);
 
-  if (text.startsWith("/start")) {
-    return startFeature(bot, msg, chatId);
-  }
-
-  if (text.startsWith("/help")) {
-    return helpFeature(bot, msg, chatId, lang);
+  // Các command chính
+  if (text.startsWith("/help") || text === t(lang, "btn_help")) {
+    await helpFeature(bot, msg, chatId);
+    return;
   }
 
   if (text.startsWith("/echo")) {
     const rest = text.replace("/echo", "").trim();
-    return bot.sendMessage(chatId, rest || t(lang, "echo_empty"));
+    bot.sendMessage(chatId, rest || t(lang, "echo_empty"));
+    return;
   }
 
   if (text.startsWith("/menu")) {
-    return showMainMenu(bot, chatId, lang);
+    showMainMenu(bot, chatId, lang);
+    return;
   }
 
-  if (text.startsWith("/farm")) {
-    return farmLogic(bot, chatId, lang);
+  if (text.startsWith("/farm") || text === t(lang, "btn_farm")) {
+    farmLogic(bot, chatId, lang);
+    return;
   }
 
-  if (text.startsWith("/claim")) {
-    return claimLogic(bot, chatId, lang);
+  if (text.startsWith("/claim") || text === t(lang, "btn_claim")) {
+    claimLogic(bot, chatId, lang);
+    return;
   }
 
-  if (text.startsWith("/shop")) {
-    return shopLogic(bot, chatId, lang);
+  if (text.startsWith("/shop") || text === t(lang, "btn_shop")) {
+    shopLogic(bot, chatId, lang);
+    return;
   }
 
   if (text.startsWith("/language")) {
-    return settingsShowLanguage(bot, chatId, lang);
+    const { settingsShowLanguage } = require("../features/settings");
+    settingsShowLanguage(bot, chatId, lang);
+    return;
   }
 
-  if (text.startsWith("/settings")) {
-    return settingsLogic(bot, chatId, lang);
+  if (text.startsWith("/settings") || text === t(lang, "btn_settings")) {
+    settingsLogic(bot, chatId, lang);
+    return;
   }
 
-  // ❓ Nếu không khớp lệnh nào
-  return bot.sendMessage(chatId, t(lang, "unknown_command"));
+  // Nếu không khớp lệnh nào
+  bot.sendMessage(chatId, t(lang, "unknown_command"));
 }
 
 module.exports = { handleCommand };

@@ -1,31 +1,39 @@
-const { getUserById } = require("./user");
+// src/middleware/lang.js
+const { getUserById } = require("../core/user");
 
 const SUPPORTED_LANGS = ["en", "vi"];
 const DEFAULT_LANG = process.env.DEFAULT_LANG || "en";
 
-/**
- * Lấy ngôn ngữ của user
- * Ưu tiên: msg.userLang (middleware) -> DB -> DEFAULT_LANG
- */
-async function getLang(chatId, msg = {}) {
+async function langMiddleware(req, res, next) {
   try {
-    // Nếu middleware đã gắn sẵn userLang
-    if (msg.userLang && SUPPORTED_LANGS.includes(msg.userLang)) {
-      return msg.userLang;
+    const chatId =
+      req.body?.message?.chat?.id ||
+      req.body?.callback_query?.from?.id;
+
+    let lang = DEFAULT_LANG;
+
+    if (chatId) {
+      const user = await getUserById(chatId);
+      if (user?.lang && SUPPORTED_LANGS.includes(user.lang)) {
+        lang = user.lang;
+      } else {
+        const tgLang =
+          req.body?.message?.from?.language_code ||
+          req.body?.callback_query?.from?.language_code;
+
+        if (tgLang && SUPPORTED_LANGS.includes(tgLang)) {
+          lang = tgLang;
+        }
+      }
     }
 
-    // Nếu có trong DB
-    const user = await getUserById(chatId);
-    if (user?.lang && SUPPORTED_LANGS.includes(user.lang)) {
-      return user.lang;
-    }
-
-    // fallback
-    return DEFAULT_LANG;
+    req.userLang = lang;
   } catch (err) {
-    console.error("❌ getLang error:", err.message);
-    return DEFAULT_LANG;
+    console.error("Lang middleware error:", err.message);
+    req.userLang = DEFAULT_LANG;
   }
+
+  next();
 }
 
-module.exports = { getLang };
+module.exports = langMiddleware;
