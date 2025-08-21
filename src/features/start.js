@@ -1,3 +1,4 @@
+// src/features/start.js
 const { getUserById, addOrUpdateUser } = require("../core/user");
 const { showMainMenu } = require("../utils/menu");
 const { t } = require("../i18n");
@@ -17,10 +18,10 @@ async function startFeature(bot, msg, chatId) {
 
   // Intro text
   const intro = [
-    "👋 " + t(lang, "about"), // thêm key i18n riêng cho dòng chào
-    t(lang, "welcome"),
-    t(lang, "about"),
-    t(lang, "features"),
+    "👋 " + t(lang, "welcome"), // thêm key i18n riêng cho dòng chào
+            t(lang, "about"),
+            t(lang, "features"),
+            t(lang, "links"),
   ].join("\n\n");
 
   try {

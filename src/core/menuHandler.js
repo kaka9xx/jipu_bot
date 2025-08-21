@@ -5,6 +5,7 @@ const { claimLogic } = require('../features/claim');
 const { shopLogic, shopShowItem, shopBuyDemo } = require('../features/shop');
 const { settingsLogic, settingsShowLanguage, settingsSetLanguage, settingsToggleReplyMenu } = require('../features/settings');
 const { showMainMenu } = require('../utils/menu');
+const { helpFeature } = require("../features/help");
 
 async function handleMenu(bot, query) {
   const chatId = query.message.chat.id;
@@ -33,9 +34,9 @@ async function handleMenu(bot, query) {
     case 'claim':
       await claimLogic(bot, chatId, lang);
       break;
-    case 'help': // ✅ thêm block này
-      await bot.sendMessage(chatId, t(lang, "help_message"));
-      break;
+    case 'help':
+       await helpFeature(bot, query.message, chatId, lang);
+       break;
     case 'shop':
       await shopLogic(bot, chatId, lang);
       break;

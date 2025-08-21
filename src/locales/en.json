@@ -1,6 +1,7 @@
 {
   "welcome_message": "Welcome! Your language is set to English.",
   "help_message": "Commands: /start, /help, /echo <text>.",
+  "btn_help": "Help",
   "echo_empty": "Nothing to echo.",
   "unknown_command": "Sorry, I didn't understand that.",
   "menu_main": "📍 Main Menu:",

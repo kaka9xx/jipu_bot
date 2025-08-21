@@ -1,6 +1,8 @@
 // src/core/bot.js
 const TelegramBot = require("node-telegram-bot-api");
 const { startFeature } = require("../features/start");
+const { helpFeature } = require("../features/help");
+
 const { handleCommand } = require("./commandHandler");
 const { handleMenu } = require("./menuHandler");
 
@@ -22,6 +24,7 @@ function setupBot(app) {
 
   // 👉 Chỉ gọi sang features
   bot.onText(/\/start/, (msg) => startFeature(bot, msg, msg.chat.id));
+  bot.onText(/\/help/, (msg) => helpFeature(bot, msg, msg.chat.id));
   bot.on("message", (msg) => handleCommand(bot, msg));
   bot.on("callback_query", (query) => handleMenu(bot, query));
 }
