@@ -22,13 +22,8 @@ async function isAdmin(chatId) {
 }
 
 async function listUsersFeature(bot, msg, chatId) {
+  // Chỉ admin mới chạy
   if (!(await isAdmin(chatId))) {
-    return bot.sendMessage(chatId, "⛔ You are not authorized to use this command.");
-  }
-
-async function listUsersFeature(bot, msg, chatId) {
-  // Chỉ cho admin
-  if (!ADMIN_IDS.includes(String(chatId))) {
     return bot.sendMessage(chatId, "⛔ You are not authorized to use this command.");
   }
 
