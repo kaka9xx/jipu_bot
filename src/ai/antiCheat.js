@@ -1,16 +1,9 @@
-function checkAntiCheat(userId) {
-const now = Date.now();
-if (!userActions[userId]) userActions[userId] = [];
-userActions[userId].push(now);
+// src/ai/antiCheat.js
+const { t } = require("../i18n");
 
-// Giữ lại log 1 phút gần nhất
-userActions[userId] = userActions[userId].filter(ts => now - ts < 60000);
-
-if (userActions[userId].length > 20) {
-return "⚠️ Phát hiện spam! Hành vi có dấu hiệu cheat.";
+async function aiReportFeature(bot, chatId, lang="en") {
+  const txt = t(lang, "ai_report_intro") || "🛡️ Send details of suspicious behavior. Our AI will analyze it.";
+  await bot.sendMessage(chatId, txt);
 }
 
-return null;
-}
-
-module.exports = { checkAntiCheat };
+module.exports = { aiReportFeature };

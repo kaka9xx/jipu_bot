@@ -1,15 +1,18 @@
-// src/features/claim.js
-const { getUserById, addOrUpdateUser } = require('../core/user');
-const { t } = require('../i18n');
+const userRepo = require('../services/userRepo');
 
-async function claimLogic(bot, chatId, lang = 'en') {
-  let user = await getUserById(chatId) || { id: chatId, lang: 'en', points: 0 };
-  const earned = user.points || 0;
-  user.points = 0;
-  await addOrUpdateUser(user);
+module.exports = async function claimFeature(bot, chatId, userId) {
+  const now = Date.now();
+  const user = await userRepo.findOrCreate(userId);
 
-  const msg = t(lang, 'claim_done').replace('{{earned}}', String(earned));
-  bot.sendMessage(chatId, msg);
-}
+  if (user.lastClaim && now - user.lastClaim < 30000) {
+    const wait = Math.ceil((30000 - (now - user.lastClaim)) / 1000);
+    return bot.sendMessage(chatId, `⚠️ Bạn click quá nhanh, thử lại sau ${wait}s`);
+  }
 
-module.exports = { claimLogic };
+  const reward = 5;
+  user.tokens = (user.tokens || 0) + reward;
+  user.lastClaim = now;
+  await userRepo.save(user);
+
+  await bot.sendMessage(chatId, `🎉 Claim thành công +${reward} $JIP!\nTổng số dư: ${user.tokens}`);
+};

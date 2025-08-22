@@ -1,69 +1,52 @@
-const { askAI } = require("../ai/ask");
-const { npcQuest } = require("../ai/npc");
-const { checkAntiCheat } = require("../ai/antiCheat");
+// src/core/menuHandler.js
+const farmFeature = require("../features/farm");
+const profileFeature = require("../features/profile");
+const shopFeature = require("../features/shop");
+const settingsFeature = require("../features/settings");
+const helpFeature = require("../features/help");
 
-module.exports = function setupMenuHandler(bot, i18n) {
-bot.on("callback_query", async (callbackQuery) => {
-const chatId = callbackQuery.message.chat.id;
-const userId = callbackQuery.from.id;
-const action = callbackQuery.data;
+// AI & NPC
+const askAI = require("../ai/ask");
+const npcChat = require("../ai/npc");
 
-try {
-// 🛡️ Anti-cheat check
-const warning = checkAntiCheat(userId);
-if (warning) {
-await bot.sendMessage(chatId, warning);
-return;
-}
+module.exports = async function menuHandler(bot, query) {
+const chatId = query.message.chat.id;
+const userId = query.from.id;
+const action = query.data;
 
 switch (action) {
-// --- Farm ---
 case "farm":
-await bot.sendMessage(chatId, "🌱 Bạn đã farm thành công! Hãy quay lại sau để farm tiếp.");
+await farmFeature(bot, chatId, userId);
 break;
 
-// --- Profile ---
 case "profile":
-await bot.sendMessage(chatId, "👤 Đây là hồ sơ của bạn (đang phát triển).");
+await profileFeature(bot, chatId, userId);
 break;
 
-// --- Shop ---
 case "shop":
-await bot.sendMessage(chatId, "🛒 Đây là cửa hàng (chưa mở bán).");
+await shopFeature(bot, chatId);
 break;
 
-// --- Settings ---
 case "settings":
-await bot.sendMessage(chatId, "⚙️ Menu cài đặt đang cập nhật.");
+await settingsFeature(bot, chatId);
 break;
 
-// --- Help ---
 case "help":
-await bot.sendMessage(chatId, "ℹ️ Hướng dẫn: Dùng menu để farm, xem hồ sơ hoặc hỏi AI.");
+await helpFeature(bot, chatId);
 break;
 
-// --- AI Ask ---
-case "ai_ask":
-await bot.sendMessage(chatId, "🤖 Bạn muốn hỏi gì Jipu AI?");
-bot.once("message", async (msg) => {
-if (!msg.text) return;
-const answer = await askAI(msg.from.id, msg.text);
-await bot.sendMessage(chatId, answer);
-});
+// 🚀 Menu AI
+case "ai":
+await bot.sendMessage(chatId, "💡 Hãy dùng lệnh /ai <câu hỏi> để trò chuyện với AI.");
 break;
 
-// --- NPC ---
+// 🚀 Menu NPC
 case "npc":
-const reply = await npcQuest(userId);
-await bot.sendMessage(chatId, reply);
+const npcAnswer = await npcChat(userId, "Xin chào NPC!");
+await bot.sendMessage(chatId, "🧑‍🌾 NPC Jipu: " + npcAnswer);
 break;
 
 default:
-await bot.sendMessage(chatId, "❓ Lựa chọn không hợp lệ.");
+await bot.sendMessage(chatId, "❓ Không rõ lựa chọn.");
 }
-} catch (err) {
-console.error("❌ MenuHandler error:", err);
-await bot.sendMessage(chatId, "⚠️ Lỗi hệ thống, thử lại sau.");
-}
-});
 };

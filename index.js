@@ -1,29 +1,21 @@
-require('dotenv').config();
-const connectDB = require('./src/core/db');
-connectDB();
-// index.js
-require("dotenv").config();
-const express = require("express");
-const bodyParser = require("body-parser");
-const langMiddleware = require("./src/middleware/lang");
-const { setupBot } = require("./src/core/bot");
+const TelegramBot = require('node-telegram-bot-api');
+const menuHandler = require('./src/core/menuHandler');
+const commandHandler = require('./src/core/commandHandler');
 
-const app = express();
-app.use(bodyParser.json());
-app.use(langMiddleware);
+const token = process.env.BOT_TOKEN;
+if (!token) {
+  console.error("❌ BOT_TOKEN not found in environment variables");
+  process.exit(1);
+}
 
-app.get("/", (_, res) => res.send("JIPU bot is alive 🚀"));
+const bot = new TelegramBot(token, { polling: true });
 
-setupBot(app);
-
-const port = process.env.PORT || 10000;
-const adminRouter = require('./src/core/admin');
-app.use('/admin', adminRouter);
-
-app.listen(port, () => {
-  console.log(`✅ Server listening on port ${port}`);
+bot.onText(/\/(\w+)/, async (msg, match) => {
+  await commandHandler(bot, msg, match[1]);
 });
 
-// xử lý lỗi & sự kiện
-const initErrorHandler = require('./src/core/errorHandler');
-initErrorHandler(); 
+bot.on('callback_query', async (query) => {
+  await menuHandler(bot, query);
+});
+
+console.log("🤖 Jipu Farm Bot is running...");

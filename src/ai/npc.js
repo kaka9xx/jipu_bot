@@ -1,16 +1,23 @@
-// src/ai/npc.js
-const User = require("../models/User");
+// ai/npc.js
+// NPC trả lời tuỳ chỉnh dựa trên hành vi người dùng (DB)
 
-async function npcQuest(userId) {
-const user = await User.findOne({ telegramId: userId });
+const askAI = require("./ask");
+const userRepo = require("../services/userRepo");
 
-if (!user) return "🤖 NPC: Bạn chưa đăng ký!";
+module.exports = async function npcChat(userId, message) {
+// Lấy user từ DB
+const user = await userRepo.findOrCreate(userId);
 
-if (user.farmCount < 5) {
-return "🌱 NPC: Hãy farm đủ 5 lần để nhận phần thưởng đầu tiên!";
-} else {
-return "🎉 NPC: Bạn đã farm chăm chỉ, giờ thử mời bạn bè để nhận bonus nhé!";
-}
-}
+// Tạo "tính cách" NPC dựa trên dữ liệu
+const personality = `
+Bạn là NPC "Jipu" trong game farm.
+Người chơi hiện có ${user.tokens || 0} $JIP token.
+Bạn phải trả lời ngắn gọn, dễ thương, dí dỏm như nhân vật chibi.
+`;
 
-module.exports = { npcQuest };
+// Gửi vào AI
+const prompt = personality + "\nNgười chơi: " + message;
+
+const reply = await askAI(prompt);
+return reply;
+};

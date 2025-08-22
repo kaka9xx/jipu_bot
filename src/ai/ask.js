@@ -1,24 +1,28 @@
-// src/ai/ask.js
-const { OpenAI } = require("openai");
-require("dotenv").config();
+// ai/ask.js
+// Gọi OpenAI API để trả lời chat
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const OpenAI = require("openai");
 
-async function askAI(userId, question) {
+let client = null;
+if (process.env.OPENAI_API_KEY) {
+client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+}
+
+module.exports = async function askAI(question) {
+if (!client) {
+return "⚠️ AI chưa được cấu hình (thiếu OPENAI_API_KEY).";
+}
+
 try {
 const response = await client.chat.completions.create({
-model: "gpt-4o-mini", // nhanh + rẻ
-messages: [
-{ role: "system", content: "Bạn là Jipu AI, trợ lý dễ thương, chuyên hỗ trợ farm." },
-{ role: "user", content: question }
-],
+model: "gpt-4o-mini", // dùng model nhỏ cho tiết kiệm token
+messages: [{ role: "user", content: question }],
+max_tokens: 200
 });
 
-return response.choices[0].message.content;
+return response.choices[0].message.content.trim();
 } catch (err) {
 console.error("AI error:", err);
-return "❌ Xin lỗi, AI đang bị lỗi hoặc quá tải.";
+return "❌ Xin lỗi, AI hiện không thể trả lời.";
 }
-}
-
-module.exports = { askAI };
+};
