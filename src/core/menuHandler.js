@@ -25,13 +25,19 @@ async function handleMenu(bot, query, lang="en") {
 
   try {
     switch (data) {
-      case "main_menu":
+      case "main_menu": // 🔙 Quay lại menu chính
         await bot.editMessageText(t(lang, "menu_main") || "📍 Main Menu:", {
           chat_id: chatId,
           message_id: query.message.message_id,
           ...mainMenu(lang)
         });
         break;
+
+         // 🔙 Quay lại menu chính
+      case "back_to_menu":
+        await showMainMenu(bot, chatId, lang);
+        break;
+
 
       case "farm":
         await farmLogic(bot, chatId, lang);
@@ -67,10 +73,6 @@ async function handleMenu(bot, query, lang="en") {
         await settingsToggleReplyMenu(bot, chatId);
         break;
 
- // 🔙 Quay lại menu chính
-      case "back_to_menu":
-        await showMainMenu(bot, chatId, lang);
-        break;
 
 
       case "profile":
