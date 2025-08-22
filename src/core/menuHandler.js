@@ -75,7 +75,7 @@ async function handleMenu(bot, query, lang="en") {
 
       case "profile":
         await profileFeature(bot, query.message, chatId);
-        await bot.sendMessage(chatId, t(lang, "profile_title") || "👤 Profile", ...profileMenu(lang));
+        await bot.sendMessage(chatId, t(lang, "profile_title") || "👤 Profile", profileMenu(lang));
         break;
 
       case "invite":
