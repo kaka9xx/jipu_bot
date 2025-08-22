@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "migrate:users": "node src/scripts/migrate_users_to_mongo.js",
-
-  "cleanup:users": "node src/scripts/cleanup_users.js"
+    "cleanup:users": "node src/scripts/cleanup_users.js"
   },
   "dependencies": {
     "body-parser": "^1.20.2",
