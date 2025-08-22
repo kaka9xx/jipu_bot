@@ -1,8 +1,5 @@
 // src/features/listUsers.js
 const { getAll } = require("../services/userRepo");
-const fs = require("fs");
-const path = require("path");
-const { Parser } = require("@json2csv/node"); // sửa lại package
 
 // ✅ ADMIN_IDS lấy từ .env
 const ADMIN_IDS = (process.env.ADMIN_IDS || "123456789")
@@ -13,8 +10,8 @@ const ADMIN_IDS = (process.env.ADMIN_IDS || "123456789")
 async function isAdmin(chatId) {
   if (ADMIN_IDS.includes(String(chatId))) return true;
   try {
-    const user = await getAll(); // Hoặc getUserById nếu bạn có
-    const found = user.find(u => u.id === Number(chatId) && u.role === "admin");
+    const users = await getAll();
+    const found = users.find(u => u.id === Number(chatId) && u.role === "admin");
     if (found) return true;
   } catch (err) {
     console.error("⚠️ isAdmin error:", err);
@@ -28,9 +25,6 @@ async function listUsersFeature(bot, msg, chatId) {
     return bot.sendMessage(chatId, "⛔ You are not authorized to use this command.");
   }
 
-  const parts = msg.text.trim().split(" ");
-  const isFull = parts.length > 1 && parts[1] === "full";
-
   try {
     const users = await getAll();
 
@@ -38,21 +32,7 @@ async function listUsersFeature(bot, msg, chatId) {
       return bot.sendMessage(chatId, "ℹ️ No users found.");
     }
 
-    // ✅ Nếu admin yêu cầu full -> export CSV
-    if (isFull) {
-      const fields = ["id", "first_name", "username", "lang", "points", "coins", "createdAt", "updatedAt"];
-      const parser = new Parser({ fields });
-      const csv = parser.parse(users);
-
-      const filePath = path.join(__dirname, "../../data/users_export.csv");
-      fs.writeFileSync(filePath, csv, "utf-8");
-
-      return bot.sendDocument(chatId, filePath, {
-        caption: `📂 Exported ${users.length} users.`,
-      });
-    }
-
-    // ✅ Ngược lại, chỉ hiển thị tối đa 20 user
+    // Hiển thị tối đa 20 user, không xuất CSV
     const maxUsers = 20;
     const userList = users
       .slice(0, maxUsers)
