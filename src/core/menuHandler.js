@@ -2,9 +2,14 @@
 const { farmLogic } = require("../features/farm");
 const { claimLogic } = require("../features/claim");
 const { shopLogic } = require("../features/shop");
-const { settingsLogic } = require("../features/settings");
 const { profileFeature } = require("../features/profile");
 const { helpFeature } = require("../features/help");
+const {
+  settingsLogic,
+  settingsShowLanguage,
+  settingsSetLanguage,
+  settingsToggleReplyMenu,
+} = require("../features/settings");
 
 const { aiAskFeature } = require("../ai/ask");
 const { aiNpcFeature } = require("../ai/npc");
@@ -39,7 +44,8 @@ async function handleMenu(bot, query, lang="en") {
       case "shop":
         await shopLogic(bot, chatId, lang);
         break;
-    // ⚙️ Settings: chọn ngôn ngữ
+
+// ⚙️ Settings: chọn ngôn ngữ
       case "settings":
         await settingsLogic(bot, chatId, lang);
         break;
@@ -56,7 +62,7 @@ async function handleMenu(bot, query, lang="en") {
         await settingsSetLanguage(bot, chatId, "vi");
         break;
 
-      // ⚙️ Settings: bật/tắt reply menu
+ // ⚙️ Settings: bật/tắt reply menu
       case "settings_reply_menu":
         await settingsToggleReplyMenu(bot, chatId);
         break;
