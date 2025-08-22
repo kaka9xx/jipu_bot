@@ -34,7 +34,7 @@
   "reply_menu_disabled": "📴 Reply Menu disabled.",
   "shop_buy_success": "✅ You bought {{name}} for {{price}} coins. Remaining: {{coins}} coins.",
   "shop_buy_failed_balance": "⚠️ Not enough coins. Price: {{price}}, you only have {{coins}}.",
-  "welcome": "👋 Welcome to *Jipu Farm Bot*, {name}!",
+  "welcome": "👋 Welcome to Jipu Farm bot, {name}!",
   "about": "📖 *About*\nJipu Farm Bot helps you farm & stake tokens easily.",
   "features": "🌱 *Features*\n- Auto farming tokens\n- Stake & earn rewards\n- Real-time updates",
   "commands": "💡 *Commands*\n/start - Start\n/menu - Show main menu\n/help - Help & support",

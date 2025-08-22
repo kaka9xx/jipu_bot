@@ -21,8 +21,10 @@ for (const file of files) {
   }
 }
 
-function t(lang, key) {
-  return translations[lang]?.[key] || key;
+// ==== CẬP NHẬT NHỎ NHẤT Thêm params====
+function t(lang, key, params = {}) {
+  const text = translations[lang]?.[key] || translations["en"]?.[key] || key;
+  return text.replace(/\{(\w+)\}/g, (_, k) => params[k] || "");
 }
 
 module.exports = { t };
