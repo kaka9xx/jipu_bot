@@ -17,18 +17,21 @@ async function handleMenu(bot, query, lang) {
   const data = query.data || "";
 
   try {
+    // Trả lời callback query ngay để Telegram không timeout
+    await bot.answerCallbackQuery(query.id);
+
     // 👉 Shop item detail
     if (data.startsWith("shop_item_")) {
       const itemId = data.replace("shop_item_", "");
       await shopShowItem(bot, chatId, lang, itemId);
-      return bot.answerCallbackQuery(query.id);
+      return;
     }
 
     // 👉 Shop buy demo
     if (data.startsWith("shop_buy_")) {
       const itemId = data.replace("shop_buy_", "");
       await shopBuyDemo(bot, chatId, lang, itemId);
-      return bot.answerCallbackQuery(query.id, { text: "🧾 Purchased (demo)" });
+      return;
     }
 
     // 👉 Các menu chính
@@ -50,11 +53,11 @@ async function handleMenu(bot, query, lang) {
         break;
 
       case "profile":
-        await profileFeature(bot, query.message, chatId); // ✅ dùng query.message để lấy profile
+        await profileFeature(bot, query.message, chatId);
         break;
 
       case "help":
-        await helpFeature(bot, query.message, chatId, lang); // dùng query.message để consistent
+        await helpFeature(bot, query.message, chatId, lang);
         break;
 
       // ⚙️ Settings: chọn ngôn ngữ
@@ -83,12 +86,15 @@ async function handleMenu(bot, query, lang) {
       default:
         await bot.sendMessage(chatId, "❓ Unknown option");
     }
-
-    // Trả lời callback query
-    await bot.answerCallbackQuery(query.id);
   } catch (err) {
     console.error("❌ handleMenu error:", err);
-    await bot.answerCallbackQuery(query.id, { text: "⚠️ Error occurred" });
+
+    // Trả lời callback query nếu có lỗi
+    try {
+      await bot.answerCallbackQuery(query.id, { text: "⚠️ Error occurred" });
+    } catch (err2) {
+      console.error("❌ Failed to answer callback query:", err2);
+    }
   }
 }
 
