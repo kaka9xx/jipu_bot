@@ -5,10 +5,11 @@ const { settingsLogic } = require("../features/settings");
 const { profileFeature } = require("../features/profile");
 const { helpFeature } = require("../features/help");
 
-const { aiAskFeature } = require("../ai/ask");
-const { aiNpcFeature } = require("../ai/npc");
+// import đúng các function mới AI
+const { handleAskAI } = require("../ai/ask");
+const { handleNPC } = require("../ai/npc");
 const { aiMemeFeature } = require("../ai/meme");
-const { aiReportFeature } = require("../ai/antiCheat");
+const { handleReport } = require("../ai/antiCheat");
 
 const { mainMenu, aiMenu, profileMenu } = require("../utils/menu");
 const { t } = require("../i18n");
@@ -16,6 +17,7 @@ const { t } = require("../i18n");
 async function handleMenu(bot, query, lang="en") {
   const chatId = query.message.chat.id;
   const data = query.data;
+  const userId = query.from.id; // dùng cho NPC/Anti-cheat
 
   try {
     switch (data) {
@@ -49,7 +51,7 @@ async function handleMenu(bot, query, lang="en") {
         break;
 
       case "invite":
-        await bot.sendMessage(chatId, (t(lang, "invite_text") || "🔗 Invite your friends with this link:") + 
+        await bot.sendMessage(chatId, (t(lang, "invite_text") || "🔗 Invite your friends with this link:") +
           ` https://t.me/jipu_farm_bot?start=${chatId}`);
         break;
 
@@ -67,19 +69,21 @@ async function handleMenu(bot, query, lang="en") {
         break;
 
       case "ai_ask":
-        await aiAskFeature(bot, chatId, lang);
+        await bot.sendMessage(chatId, "❓ Hãy nhập câu hỏi bạn muốn hỏi Jipu AI:");
+        // đợi 1 tin nhắn tiếp theo từ user
+        bot.once("message", msg => handleAskAI(bot, chatId, msg.text));
         break;
 
       case "ai_npc":
-        await aiNpcFeature(bot, chatId, lang);
+        await handleNPC(bot, chatId, userId);
         break;
 
       case "ai_meme":
-        await aiMemeFeature(bot, chatId, lang);
+        await aiMemeFeature(bot, chatId);
         break;
 
       case "ai_report":
-        await aiReportFeature(bot, chatId, lang);
+        await handleReport(bot, chatId, userId);
         break;
 
       // Optional placeholders
