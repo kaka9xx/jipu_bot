@@ -32,9 +32,9 @@ async function shopLogic(bot, chatId, lang = "en") {
   for (const it of shop.items) {
     buttons.push([{ text: itemName(it, lang) + ` (${it.price})`, callback_data: `shop_item_${it.id}` }]);
   }
-  const keyboard = { reply_markup: { inline_keyboard: [...buttons, [{ text: t(lang, "btn_back"), callback_data: "back_to_menu" }] ] } };
+  const keyboard = { reply_markup: { inline_keyboard: [...buttons, [{ text: t(lang, "btn_back"), callback_data: "main_menu" }] ] } };
   await bot.sendMessage(chatId, `${t(lang, "shop_title")}\n${t(lang, "shop_choose_item")}`, keyboard);
-}
+}main_menu
 
 async function shopShowItem(bot, chatId, lang, itemId) {
   const shop = loadShop();
