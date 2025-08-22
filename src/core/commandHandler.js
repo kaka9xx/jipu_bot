@@ -1,3 +1,4 @@
+//src/core/commandHandler.js
 const { t } = require("../i18n");
 const { showMainMenu } = require("../utils/menu");
 const { farmLogic } = require("../features/farm");
@@ -6,23 +7,63 @@ const { shopLogic } = require("../features/shop");
 const { settingsLogic } = require("../features/settings");
 const { helpFeature } = require("../features/help");
 const { startFeature } = require("../features/start");
-const { profileFeature } = require("../features/profile"); // ✅
+const { profileFeature } = require("../features/profile");
+
+const { listUsersFeature } = require("../features/listUsers");
+const {
+  deleteUserFeature,
+  whoAmIFeature,
+  deleteUserCsvFeature,
+  exportUsersFeature
+} = require("../features/deleteUser");
 
 async function handleCommand(bot, msg, lang) {
   const chatId = msg.chat.id;
   const text = (msg.text || "").trim();
 
-  // Các command chính
+  // /start
   if (text.startsWith("/start")) {
-    await startFeature(bot, msg, chatId); // ✅ gọi chuẩn 3 tham số
+    await startFeature(bot, msg, chatId, lang);
     return;
   }
 
+  // /help
   if (text.startsWith("/help") || text === t(lang, "btn_help")) {
     await helpFeature(bot, msg, chatId);
     return;
   }
 
+  // /whoami
+  if (text.startsWith("/whoami")) {
+    whoAmIFeature(bot, msg, chatId);
+    return;
+  }
+
+  // /listusers
+  if (text.startsWith("/listusers")) {
+    listUsersFeature(bot, msg, chatId);
+    return;
+  }
+
+  // /deleteuser
+  if (text.startsWith("/deleteuser")) {
+    deleteUserFeature(bot, msg, chatId);
+    return;
+  }
+
+  // /deleteusercsv
+  if (text.startsWith("/deleteusercsv")) {
+    deleteUserCsvFeature(bot, msg, chatId);
+    return;
+  }
+
+  // /exportusers
+  if (text.startsWith("/exportusers")) {
+    exportUsersFeature(bot, msg, chatId);
+    return;
+  }
+
+  // Các command khác
   if (text.startsWith("/echo")) {
     const rest = text.replace("/echo", "").trim();
     bot.sendMessage(chatId, rest || t(lang, "echo_empty"));
@@ -49,7 +90,7 @@ async function handleCommand(bot, msg, lang) {
     return;
   }
 
-  if (text.startsWith("/profile")) {          // ✅ thêm đoạn này
+  if (text.startsWith("/profile")) {
     await profileFeature(bot, msg, chatId);
     return;
   }
