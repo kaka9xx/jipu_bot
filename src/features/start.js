@@ -19,8 +19,9 @@ async function startFeature(bot, msg, chatId) {
   }
 
   // Intro text (sử dụng i18n)
+  const name = user.first_name || user.username || "friend";
   const intro = [
-    "👋 " + t(lang, "welcome"), // key: "welcome": "Welcome to JIPU bot!"
+    "👋 " + t(lang, "welcome",{ name } ), // key: "welcome": "Welcome to JIPU bot!"
     t(lang, "about"),
     t(lang, "features"),
     t(lang, "links"),

@@ -7,6 +7,7 @@ const { shopLogic } = require("../features/shop");
 const { settingsLogic } = require("../features/settings");
 const { helpFeature } = require("../features/help");
 const{startFeature} = require("../features/start");
+const { profileFeature } = require("../features/profile");
 
 async function handleCommand(bot, msg, lang) {
   const chatId = msg.chat.id;

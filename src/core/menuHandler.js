@@ -10,6 +10,7 @@ const {
 } = require("../features/settings");
 const { showMainMenu } = require("../utils/menu");
 const { helpFeature } = require("../features/help");
+const { profileFeature } = require("../features/profile"); // ✅ thêm
 
 async function handleMenu(bot, query, lang) {
   const chatId = query.message.chat.id;
@@ -49,6 +50,10 @@ async function handleMenu(bot, query, lang) {
 
     case "settings":
       await settingsLogic(bot, chatId, lang);
+      break;
+
+    case "profile": // ✅ thêm profile vào menu handler
+      await profileFeature(bot, chatId, lang);
       break;
 
     // ⚙️ Settings: chọn ngôn ngữ

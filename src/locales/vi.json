@@ -15,7 +15,7 @@
   "shop_text": "🛒 Cửa hàng đang xây dựng...",
   "btn_language": "🌐 Ngôn ngữ",
   "btn_back": "⬅️ Quay lại",
-  "back_to_menu": "↩️ Quay lại menu chính.",
+  "back_to_menu": "🔙 Quay lại menu chính.",
   "settings_text": "⚙️ Cài đặt đang được cập nhật...",
   "settings_title": "⚙️ Cài đặt",
   "settings_choose_language": "🌐 Chọn ngôn ngữ:",
@@ -60,5 +60,10 @@
   "btn_change_lang": "Thay đổi ngôn ngữ",
   "btn_toggle_reply_menu": "Bật/Tắt menu Inline",
    "choose_language": "chọn ngôn ngữ:",
-     "lang_updated": "Ngôn ngữ đã được cập nhật thành công!"
+     "lang_updated": "Ngôn ngữ đã được cập nhật thành công!",
+
+  "profile_name": "Tên",
+  "profile_lang": "Ngôn ngữ",
+  "profile_points": "Điểm",
+  "profile_created": "Ngày tạo"
 }

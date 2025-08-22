@@ -60,6 +60,16 @@
   "btn_toggle_reply_menu": "Toggle Reply Menu",
     "choose_language": "choose a language:",
 
-      "lang_updated": "Language has been updated successfully!"
+      "lang_updated": "Language has been updated successfully!",
+
+
+      "profile_name": "Name",
+  "profile_lang": "Language",
+  "profile_points": "Points",
+  "profile_created": "Created at",
+  "profile_title": "Profile of {name}",
+  "profile_not_found": "You need to /start first to create a profile."
+
+
 
 }

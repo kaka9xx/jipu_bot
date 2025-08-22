@@ -16,7 +16,8 @@ function mainMenu(lang = "en") {
           { text: t(lang, "btn_settings"), callback_data: "settings" },
         ],
         [
-          { text: t(lang, "btn_help"), callback_data: "help" }, // ✅ Help inline
+          { text: t(lang, "btn_profile"), callback_data: "profile" }, // ✅ Thêm Profile inline
+          { text: t(lang, "btn_help"), callback_data: "help" },       // Help inline
         ],
       ],
     },
@@ -32,7 +33,7 @@ function replyMenu(lang = "en") {
       keyboard: [
         [t(lang, "btn_farm"), t(lang, "btn_claim")],
         [t(lang, "btn_shop"), t(lang, "btn_settings")],
-        [t(lang, "btn_help")], // ✅ Help reply
+        [t(lang, "btn_profile"), t(lang, "btn_help")], // ✅ Thêm Profile reply
       ],
       resize_keyboard: true,
       one_time_keyboard: false,
