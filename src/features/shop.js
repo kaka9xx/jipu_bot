@@ -34,7 +34,7 @@ async function shopLogic(bot, chatId, lang = "en") {
   }
   const keyboard = { reply_markup: { inline_keyboard: [...buttons, [{ text: t(lang, "btn_back"), callback_data: "main_menu" }] ] } };
   await bot.sendMessage(chatId, `${t(lang, "shop_title")}\n${t(lang, "shop_choose_item")}`, keyboard);
-}main_menu
+}
 
 async function shopShowItem(bot, chatId, lang, itemId) {
   const shop = loadShop();
