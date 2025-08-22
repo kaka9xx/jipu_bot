@@ -1,9 +1,11 @@
 //src/features/profile.js
-const { getUserById } = require("../core/user");
+const { getUserByIdAndUpdate } = require("../core/user");
 const { t } = require("../i18n");
 
 async function profileFeature(bot, msg, chatId) {
-  let user = await getUserById(chatId);
+  // ✅ Lấy user và cập nhật tên/username mới nhất
+  let user = await getUserByIdAndUpdate(chatId, msg);
+
   if (!user) {
     await bot.sendMessage(chatId, "⚠️ No profile found. Try /start first.");
     return;
@@ -11,7 +13,6 @@ async function profileFeature(bot, msg, chatId) {
 
   const lang = user.lang || "en";
 
-  // Hiển thị profile cơ bản
   const profileText = [
     `🧑 ${t(lang, "profile_name")}: ${user.first_name || user.username || "N/A"}`,
     `🌐 ${t(lang, "profile_lang")}: ${user.lang}`,
@@ -27,4 +28,3 @@ async function profileFeature(bot, msg, chatId) {
 }
 
 module.exports = { profileFeature };
-

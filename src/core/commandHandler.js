@@ -8,6 +8,7 @@ const { settingsLogic } = require("../features/settings");
 const { helpFeature } = require("../features/help");
 const { startFeature } = require("../features/start");
 const { profileFeature } = require("../features/profile");
+const { updateUserFromMsg } = require("./user");
 
 const { listUsersFeature } = require("../features/listUsers");
 const {
@@ -19,6 +20,8 @@ const {
 
 async function handleCommand(bot, msg, lang) {
   const chatId = msg.chat.id;
+   // ✅ Update info user mới nhất
+  await updateUserFromMsg(msg);
   const text = (msg.text || "").trim();
 
   // /start

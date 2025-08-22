@@ -29,6 +29,9 @@ function withUserLang(handler) {
     const chatId = payload.message?.chat?.id || payload.chat?.id;
     if (!chatId) return;
 
+    // ✅ Cập nhật tên/username mới nhất
+    if (payload.message) await updateUserFromMsg(payload.message);
+
     const user = await getUserById(chatId);
     const lang = user?.lang || process.env.DEFAULT_LANG || "en";
 
