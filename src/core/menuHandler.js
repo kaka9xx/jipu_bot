@@ -1,3 +1,4 @@
+//core/menuHandler.js
 const { farmLogic } = require("../features/farm");
 const { claimLogic } = require("../features/claim");
 const { shopLogic } = require("../features/shop");
@@ -38,10 +39,28 @@ async function handleMenu(bot, query, lang="en") {
       case "shop":
         await shopLogic(bot, chatId, lang);
         break;
-
+    // ⚙️ Settings: chọn ngôn ngữ
       case "settings":
         await settingsLogic(bot, chatId, lang);
         break;
+
+      case "settings_language":
+        await settingsShowLanguage(bot, chatId, lang);
+        break;
+
+      case "set_lang_en":
+        await settingsSetLanguage(bot, chatId, "en");
+        break;
+
+      case "set_lang_vi":
+        await settingsSetLanguage(bot, chatId, "vi");
+        break;
+
+      // ⚙️ Settings: bật/tắt reply menu
+      case "settings_reply_menu":
+        await settingsToggleReplyMenu(bot, chatId);
+        break;
+
 
       case "profile":
         await profileFeature(bot, query.message, chatId);
