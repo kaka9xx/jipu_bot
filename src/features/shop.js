@@ -53,7 +53,7 @@ async function shopShowItem(bot, chatId, lang, itemId) {
       inline_keyboard: [
         [{ text: t(lang, "btn_buy"), callback_data: `shop_buy_${it.id}` }],
         [{ text: t(lang, "btn_shop_back"), callback_data: "shop" }],
-        [{ text: t(lang, "btn_back"), callback_data: "back_to_menu" }],
+        [{ text: t(lang, "btn_back"), callback_data: "main_menu" }],
       ]
     }
   };

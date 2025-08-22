@@ -33,7 +33,7 @@
   "reply_menu_disabled": "📴 Đã tắt Reply Menu.",
   "shop_buy_success": "✅ Bạn đã mua {{name}} giá {{price}} xu. Còn lại: {{coins}} xu.",
   "shop_buy_failed_balance": "⚠️ Không đủ xu. Vật phẩm giá {{price}}, bạn chỉ có {{coins}}.",
-  "welcome": "*Chào mừng {name} đến với JIPU Farm bot!*",
+  "welcome": "Chào mừng *{name}* đến với JIPU Farm bot!",
   "about": "📖 *Giới thiệu*\nJipu Farm Bot là trợ lý giúp bạn farm & stake token dễ dàng.",
   "features": "🌱 *Tính năng*\n- Farm token tự động\n- Stake & nhận thưởng\n- Cập nhật theo thời gian thực",
   "commands": "💡 *Lệnh*\n/start - Bắt đầu\n/menu - Hiện menu chính\n/help - Hướng dẫn & hỗ trợ",

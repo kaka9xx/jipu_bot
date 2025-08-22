@@ -17,7 +17,7 @@ async function settingsLogic(bot, chatId, lang = "en") {
       inline_keyboard: [
         [{ text: t(lang, "btn_change_lang"), callback_data: "settings_language" }],
         [{ text: t(lang, "btn_toggle_reply_menu"), callback_data: "settings_reply_menu" }],
-        [{ text: t(lang, "btn_back"), callback_data: "back_to_menu" }],
+        [{ text: t(lang, "btn_back"), callback_data: "main_menu" }],
       ],
     },
   });

@@ -51,7 +51,9 @@ function profileMenu(lang="en") {
           { text: t(lang, "btn_withdraw") || "💰 Withdraw", callback_data: "withdraw" },
           { text: t(lang, "btn_invite") || "🔗 Invite", callback_data: "invite" }
         ],
-        [{ text: t(lang, "btn_back") || "⬅️ Back", callback_data: "main_menu" }]
+        [
+          { text: t(lang, "btn_back") || "⬅️ Back", callback_data: "main_menu" }
+        ]
       ]
     }
   };
