@@ -48,9 +48,15 @@
     "claim": "Claim your rewards",
     "shop": "Open the shop",
     "settings": "Change your settings"
-  },"menu_main": "Main menu",
+  },"menu_main": "📍 Main menu",
   "reply_menu_on": "Reply menu enabled.",
   "reply_menu_off": "Reply menu disabled.",
   "unknown_command": "I don't understand that command.",
-  "echo_empty": "You didn’t type anything to echo."
+  "echo_empty": "You didn’t type anything to echo.",
+  "btn_reply_menu": "⌨️ Reply Menu",
+  "reply_menu_enabled": "✅ Reply Menu enabled.",
+  "reply_menu_disabled": "📴 Reply Menu disabled.",
+  "btn_change_lang": "Change Language",
+  "btn_toggle_reply_menu": "Toggle Reply Menu"
+
 }
