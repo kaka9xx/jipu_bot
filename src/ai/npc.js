@@ -1,21 +1,16 @@
 // src/ai/npc.js
 const User = require("../models/User");
 
-async function handleNPC(bot, chatId, userId) {
-  const user = await User.findOne({ telegramId: userId });
-  if (!user) {
-    await bot.sendMessage(chatId, "❌ Bạn chưa có hồ sơ. Gõ /start trước nhé.");
-    return;
-  }
+async function npcQuest(userId) {
+const user = await User.findOne({ telegramId: userId });
 
-  let npcMsg = "👋 Chào nhà nông mới!";
-  if (user.farmCount > 50) {
-    npcMsg = "🌾 Bạn đã farm hơn 50 lần, NPC giao nhiệm vụ nâng cấp trang trại!";
-  } else if (user.joinedAt && (Date.now() - user.joinedAt.getTime()) < 7*24*3600*1000) {
-    npcMsg = "🎁 Người mới trong 7 ngày, NPC tặng bạn phần thưởng newbie!";
-  }
+if (!user) return "🤖 NPC: Bạn chưa đăng ký!";
 
-  await bot.sendMessage(chatId, npcMsg);
+if (user.farmCount < 5) {
+return "🌱 NPC: Hãy farm đủ 5 lần để nhận phần thưởng đầu tiên!";
+} else {
+return "🎉 NPC: Bạn đã farm chăm chỉ, giờ thử mời bạn bè để nhận bonus nhé!";
+}
 }
 
-module.exports = { handleNPC };
+module.exports = { npcQuest };
