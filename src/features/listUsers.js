@@ -2,7 +2,7 @@
 const { getAll } = require("../services/userRepo");
 const fs = require("fs");
 const path = require("path");
-const { Parser } = require("json2csv");
+const { Parser } = require("@json2csv/node"); // sửa lại package
 
 // ✅ ADMIN_IDS lấy từ .env
 const ADMIN_IDS = (process.env.ADMIN_IDS || "123456789")
@@ -13,8 +13,9 @@ const ADMIN_IDS = (process.env.ADMIN_IDS || "123456789")
 async function isAdmin(chatId) {
   if (ADMIN_IDS.includes(String(chatId))) return true;
   try {
-    const user = await getUserById(chatId);
-    if (user && user.role === "admin") return true; // check thêm trong DB
+    const user = await getAll(); // Hoặc getUserById nếu bạn có
+    const found = user.find(u => u.id === Number(chatId) && u.role === "admin");
+    if (found) return true;
   } catch (err) {
     console.error("⚠️ isAdmin error:", err);
   }
