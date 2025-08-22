@@ -1,4 +1,3 @@
-// src/core/commandHandler.js
 const { t } = require("../i18n");
 const { showMainMenu } = require("../utils/menu");
 const { farmLogic } = require("../features/farm");
@@ -6,16 +5,16 @@ const { claimLogic } = require("../features/claim");
 const { shopLogic } = require("../features/shop");
 const { settingsLogic } = require("../features/settings");
 const { helpFeature } = require("../features/help");
-const{startFeature} = require("../features/start");
-const { profileFeature } = require("../features/profile");
+const { startFeature } = require("../features/start");
+const { profileFeature } = require("../features/profile"); // ✅
 
 async function handleCommand(bot, msg, lang) {
   const chatId = msg.chat.id;
   const text = (msg.text || "").trim();
 
   // Các command chính
-     if (text.startsWith("/start")) {
-    startFeature(bot, chatId, lang);
+  if (text.startsWith("/start")) {
+    await startFeature(bot, msg, chatId); // ✅ gọi chuẩn 3 tham số
     return;
   }
 
@@ -47,6 +46,11 @@ async function handleCommand(bot, msg, lang) {
 
   if (text.startsWith("/shop") || text === t(lang, "btn_shop")) {
     shopLogic(bot, chatId, lang);
+    return;
+  }
+
+  if (text.startsWith("/profile")) {          // ✅ thêm đoạn này
+    await profileFeature(bot, msg, chatId);
     return;
   }
 
