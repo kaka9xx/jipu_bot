@@ -30,40 +30,18 @@ async function getAll() {
 }
 
 async function getById(id) {
-  const idStr = String(id); // ✅ ép về string
+  const idNum = Number(id);
+  if (isNaN(idNum)) return null; // 🚨 chặn hacker gửi id không hợp lệ
+
   if (UserModel && process.env.MONGO_URI) {
-    return await UserModel.findOne({ id: idStr }).lean();
+    return await UserModel.findOne({ id: idNum }).lean();
   } else {
     await ensureFile();
     const all = JSON.parse(fs.readFileSync(storageFile, "utf-8") || "[]");
-    return all.find((u) => u.id === idStr) || null;
+    return all.find((u) => u.id === idNum) || null;
   }
 }
 
 async function upsert(user) {
-  user.id = String(user.id); // ✅ đảm bảo luôn là string
-
-  if (UserModel && process.env.MONGO_URI) {
-    const plain = user.toObject ? user.toObject() : { ...user };
-    delete plain._id;
-
-    return await UserModel.findOneAndUpdate(
-      { id: plain.id },
-      { $set: plain },
-      { upsert: true, new: true }
-    ).lean();
-  } else {
-    await ensureFile();
-    const all = JSON.parse(fs.readFileSync(storageFile, "utf-8") || "[]");
-    const idx = all.findIndex((u) => u.id === user.id);
-    if (idx >= 0) {
-      all[idx] = { ...all[idx], ...user };
-    } else {
-      all.push(user);
-    }
-    fs.writeFileSync(storageFile, JSON.stringify(all, null, 2), "utf-8");
-    return user;
-  }
-}
-
-module.exports = { getAll, getById, upsert };
+  const idNum = Number(user.id);
+  if (isNaN(idNum)) throw new Error("❌ Invalid chatId");

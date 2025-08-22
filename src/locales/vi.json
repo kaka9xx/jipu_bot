@@ -65,5 +65,7 @@
   "profile_name": "Tên",
   "profile_lang": "Ngôn ngữ",
   "profile_points": "Điểm",
-  "profile_created": "Ngày tạo"
+  "profile_created": "Ngày tạo",
+  "profile_title": "Hồ sơ của {name}",
+  "profile_not_found": "Bạn cần /start trước để tạo hồ sơ."
 }
