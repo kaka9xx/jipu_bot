@@ -30,18 +30,20 @@ async function getAll() {
 }
 
 async function getById(id) {
+  const idStr = String(id); // ✅ ép về string
   if (UserModel && process.env.MONGO_URI) {
-    return await UserModel.findOne({ id }).lean();
+    return await UserModel.findOne({ id: idStr }).lean();
   } else {
     await ensureFile();
     const all = JSON.parse(fs.readFileSync(storageFile, "utf-8") || "[]");
-    return all.find((u) => u.id === id) || null;
+    return all.find((u) => u.id === idStr) || null;
   }
 }
 
 async function upsert(user) {
+  user.id = String(user.id); // ✅ đảm bảo luôn là string
+
   if (UserModel && process.env.MONGO_URI) {
-    // Chuyển về object thuần, loại bỏ _id để tránh lỗi duplicate key
     const plain = user.toObject ? user.toObject() : { ...user };
     delete plain._id;
 
