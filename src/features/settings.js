@@ -29,7 +29,7 @@ async function settingsShowLanguage(bot, chatId, lang = "en") {
       inline_keyboard: [
         [{ text: "🇺🇸 English", callback_data: "set_lang_en" }],
         [{ text: "🇻🇳 Tiếng Việt", callback_data: "set_lang_vi" }],
-        [{ text: t(lang, "btn_back"), callback_data: "settings_language" }],
+        [{ text: t(lang, "btn_back"), callback_data: "settings" }],
       ],
     },
   });
