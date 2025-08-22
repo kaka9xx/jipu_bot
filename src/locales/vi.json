@@ -1,7 +1,7 @@
 {
   "welcome_message": "Chào mừng! Ngôn ngữ của bạn đã được đặt là Tiếng Việt.",
   "help_message": "Các lệnh: /start, /help, /echo <văn bản>.",
-  "btn_help": "Hướng dẫn",
+  "btn_help": "❓ Hướng dẫn",
   "echo_empty": "Không có gì để lặp lại.",
   "unknown_command": "Xin lỗi, mình không hiểu lệnh này.",
   "menu_main": "📍 Menu chính:",
@@ -61,7 +61,7 @@
   "btn_toggle_reply_menu": "Bật/Tắt menu Inline",
    "choose_language": "chọn ngôn ngữ:",
      "lang_updated": "Ngôn ngữ đã được cập nhật thành công!",
-    "btn_profile": "Hồ sơ",
+    "btn_profile": "🧑 Hồ sơ",
   "profile_name": "Tên",
   "profile_lang": "Ngôn ngữ",
   "profile_points": "Điểm",

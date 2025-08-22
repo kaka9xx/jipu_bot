@@ -1,7 +1,7 @@
 {
   "welcome_message": "Welcome! Your language has been set to English.",
   "help_message": "Commands: /start, /help, /echo <text>.",
-  "btn_help": "Help",
+  "btn_help": "❓ Help",
   "echo_empty": "Nothing to echo.",
   "unknown_command": "Sorry, I don’t understand that command.",
   "menu_main": "📍 Main Menu:",
@@ -62,7 +62,7 @@
 
       "lang_updated": "Language has been updated successfully!",
 
-"btn_profile": "Profile",
+"btn_profile": "🧑 Profile",
   "profile_name": "Name",
   "profile_lang": "Language",
   "profile_points": "Points",
