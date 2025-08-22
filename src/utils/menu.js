@@ -1,3 +1,4 @@
+//utils/menu.js
 const { t } = require("../i18n");
 
 function mainMenu(lang = "en") {
@@ -19,7 +20,10 @@ function mainMenu(lang = "en") {
         [
           { text: t(lang, "btn_invite") || "🔗 Invite", callback_data: "invite" },
           { text: t(lang, "btn_help") || "📖 Help", callback_data: "help" }
-        ]
+        ],
+         [
+          { text: t(lang, "btn_settings") || "⚙️ Settings", callback_data: "settings" },
+        ],
       ]
     }
   };
