@@ -6,6 +6,7 @@ const { claimLogic } = require("../features/claim");
 const { shopLogic } = require("../features/shop");
 const { settingsLogic } = require("../features/settings");
 const { helpFeature } = require("../features/help");
+const{startFeature} = require("../features/start");
 
 async function handleCommand(bot, msg, lang) {
   const chatId = msg.chat.id;
@@ -13,7 +14,7 @@ async function handleCommand(bot, msg, lang) {
 
   // Các command chính
      if (text.startsWith("/start")) {
-    showMainMenu(bot, chatId, lang);
+    startFeature(bot, chatId, lang);
     return;
   }
 
