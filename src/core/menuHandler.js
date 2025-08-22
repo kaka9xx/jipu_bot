@@ -1,41 +1,32 @@
-// src/core/menuHandler.js
 const { farmLogic } = require("../features/farm");
 const { claimLogic } = require("../features/claim");
-const { shopLogic, shopShowItem, shopBuyDemo } = require("../features/shop");
-const {
-  settingsLogic,
-  settingsShowLanguage,
-  settingsSetLanguage,
-  settingsToggleReplyMenu,
-} = require("../features/settings");
-const { showMainMenu } = require("../utils/menu");
-const { helpFeature } = require("../features/help");
+const { shopLogic } = require("../features/shop");
+const { settingsLogic } = require("../features/settings");
 const { profileFeature } = require("../features/profile");
+const { helpFeature } = require("../features/help");
 
-async function handleMenu(bot, query, lang) {
+const { aiAskFeature } = require("../ai/ask");
+const { aiNpcFeature } = require("../ai/npc");
+const { aiMemeFeature } = require("../ai/meme");
+const { aiReportFeature } = require("../ai/antiCheat");
+
+const { mainMenu, aiMenu, profileMenu } = require("../utils/menu");
+const { t } = require("../i18n");
+
+async function handleMenu(bot, query, lang="en") {
   const chatId = query.message.chat.id;
-  const data = query.data || "";
+  const data = query.data;
 
   try {
-    // Trả lời callback query ngay để Telegram không timeout
-    await bot.answerCallbackQuery(query.id);
-
-    // 👉 Shop item detail
-    if (data.startsWith("shop_item_")) {
-      const itemId = data.replace("shop_item_", "");
-      await shopShowItem(bot, chatId, lang, itemId);
-      return;
-    }
-
-    // 👉 Shop buy demo
-    if (data.startsWith("shop_buy_")) {
-      const itemId = data.replace("shop_buy_", "");
-      await shopBuyDemo(bot, chatId, lang, itemId);
-      return;
-    }
-
-    // 👉 Các menu chính
     switch (data) {
+      case "main_menu":
+        await bot.editMessageText(t(lang, "menu_main") || "📍 Main Menu:", {
+          chat_id: chatId,
+          message_id: query.message.message_id,
+          ...mainMenu(lang)
+        });
+        break;
+
       case "farm":
         await farmLogic(bot, chatId, lang);
         break;
@@ -54,47 +45,63 @@ async function handleMenu(bot, query, lang) {
 
       case "profile":
         await profileFeature(bot, query.message, chatId);
+        await bot.sendMessage(chatId, t(lang, "profile_title") || "👤 Profile", profileMenu(lang));
+        break;
+
+      case "invite":
+        await bot.sendMessage(chatId, (t(lang, "invite_text") || "🔗 Invite your friends with this link:") + 
+          ` https://t.me/jipu_farm_bot?start=${chatId}`);
         break;
 
       case "help":
-        await helpFeature(bot, query.message, chatId, lang);
+        await helpFeature(bot, query.message, chatId);
         break;
 
-      // ⚙️ Settings: chọn ngôn ngữ
-      case "settings_language":
-        await settingsShowLanguage(bot, chatId, lang);
+      // ---- AI Zone ----
+      case "ai_zone":
+        await bot.editMessageText(t(lang, "menu_ai_title") || "🤖 Jipu AI Zone", {
+          chat_id: chatId,
+          message_id: query.message.message_id,
+          ...aiMenu(lang)
+        });
         break;
 
-      case "set_lang_en":
-        await settingsSetLanguage(bot, chatId, "en");
+      case "ai_ask":
+        await aiAskFeature(bot, chatId, lang);
         break;
 
-      case "set_lang_vi":
-        await settingsSetLanguage(bot, chatId, "vi");
+      case "ai_npc":
+        await aiNpcFeature(bot, chatId, lang);
         break;
 
-      // ⚙️ Settings: bật/tắt reply menu
-      case "settings_reply_menu":
-        await settingsToggleReplyMenu(bot, chatId);
+      case "ai_meme":
+        await aiMemeFeature(bot, chatId, lang);
         break;
 
-      // 🔙 Quay lại menu chính
-      case "back_to_menu":
-        await showMainMenu(bot, chatId, lang);
+      case "ai_report":
+        await aiReportFeature(bot, chatId, lang);
+        break;
+
+      // Optional placeholders
+      case "withdraw":
+        await bot.sendMessage(chatId, t(lang, "withdraw_coming") || "💰 Withdraw coming soon.");
+        break;
+
+      case "upgrade":
+        await shopLogic(bot, chatId, lang);
+        break;
+
+      case "quest":
+        await bot.sendMessage(chatId, t(lang, "quest_coming") || "🎯 Daily quests coming soon.");
         break;
 
       default:
-        await bot.sendMessage(chatId, "❓ Unknown option");
+        await bot.answerCallbackQuery(query.id, { text: "Unknown action" });
+        break;
     }
   } catch (err) {
     console.error("❌ handleMenu error:", err);
-
-    // Trả lời callback query nếu có lỗi
-    try {
-      await bot.answerCallbackQuery(query.id, { text: "⚠️ Error occurred" });
-    } catch (err2) {
-      console.error("❌ Failed to answer callback query:", err2);
-    }
+    try { await bot.answerCallbackQuery(query.id, { text: "⚠️ Error occurred" }); } catch {}
   }
 }
 
