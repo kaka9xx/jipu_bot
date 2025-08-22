@@ -1,13 +1,12 @@
 // src/scripts/cleanup_users.js
-
 try { require('dotenv').config(); }
 catch (err) { console.warn("⚠️ Module 'dotenv' chưa được cài, dùng process.env trực tiếp."); }
 
 const mongoose = require('mongoose');
 const User = require('../models/User');
 const fs = require('fs');
-const { Parser } = require('json2csv');
 const path = require('path');
+const { Parser } = require('@json2csv/node');
 
 const ScriptRunSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
@@ -37,7 +36,10 @@ function log(...args) {
 
 (async () => {
   try {
-    await mongoose.connect(MONGO_URI);
+    await mongoose.connect(MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
     log("✅ Connected to MongoDB");
 
     if (!force) {
@@ -85,13 +87,6 @@ function log(...args) {
 
         log(`⚡ Cleaned user ${id}, kept _id=${keep._id}, removed ${remove.length} ${dryRun ? '(dry-run)' : ''}`);
       }
-    }
-
-    if (adminDuplicates.length > 0) {
-      log("🔹 Admin trùng lặp (không xóa):");
-      adminDuplicates.forEach(a => {
-        log(`  Admin ${a.adminId}, giữ _id=${a.keepId}, trùng lặp: [${a.duplicates.join(', ')}]`);
-      });
     }
 
     // --- Xuất CSV ---
