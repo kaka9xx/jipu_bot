@@ -38,7 +38,6 @@ async function handleMenu(bot, query, lang="en") {
         await showMainMenu(bot, chatId, lang);
         break;
 
-
       case "farm":
         await farmLogic(bot, chatId, lang);
         break;
@@ -74,16 +73,38 @@ async function handleMenu(bot, query, lang="en") {
         break;
 
 
+ // Profile
+  case "profile":
+  case "invite":
+    try {
+        if (query.data === "profile") {
+            // Xử lý profile
+            await profileFeature(bot, query.message, chatId);
+            const text = t(lang, "profile_title") || "👤 Profile";
+            await bot.editMessageText(text, {
+                chat_id: chatId,
+                message_id: query.message.message_id,
+                ...profileMenu(lang) // menu profile
+            });
 
-      case "profile":
-        await profileFeature(bot, query.message, chatId);
-        await bot.sendMessage(chatId, t(lang, "profile_title") || "👤 Profile", profileMenu(lang));
-        break;
+        } else if (query.data === "invite") {
+            // Xử lý invite
+            const inviteText = (t(lang, "invite_text") || "🔗 Invite your friends with this link:") +
+                ` https://t.me/jipu_farm_bot?start=${chatId}`;
+            await bot.editMessageText(inviteText, {
+                chat_id: chatId,
+                message_id: query.message.message_id
+                // invite không cần menu, nếu muốn có menu thêm profileMenu(lang)
+            });
+        }
 
-      case "invite":
-        await bot.sendMessage(chatId, (t(lang, "invite_text") || "🔗 Invite your friends with this link:") + 
-          ` https://t.me/jipu_farm_bot?start=${chatId}`);
-        break;
+        console.log(`[MENU] Processed ${query.data} for chatId: ${chatId}`);
+    } catch (error) {
+        console.error(`[MENU] Error processing ${query.data} for chatId ${chatId}:`, error);
+        await bot.sendMessage(chatId, "⚠️ Đã có lỗi, vui lòng thử lại sau.");
+    }
+    break;
+
 
       case "help":
         await helpFeature(bot, query.message, chatId);
