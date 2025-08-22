@@ -92,7 +92,7 @@ async function handleMenu(bot, query, lang="en") {
         await bot.editMessageText(t(lang, "menu_ai_title") || "🤖 Jipu AI Zone", {
           chat_id: chatId,
           message_id: query.message.message_id,
-          ...aiMenu(lang)
+          aiMenu(lang)
         });
         break;
 
