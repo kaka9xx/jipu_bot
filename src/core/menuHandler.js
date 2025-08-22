@@ -1,52 +1,108 @@
-// src/core/menuHandler.js
-const farmFeature = require("../features/farm");
-const profileFeature = require("../features/profile");
-const shopFeature = require("../features/shop");
-const settingsFeature = require("../features/settings");
-const helpFeature = require("../features/help");
+const { farmLogic } = require("../features/farm");
+const { claimLogic } = require("../features/claim");
+const { shopLogic } = require("../features/shop");
+const { settingsLogic } = require("../features/settings");
+const { profileFeature } = require("../features/profile");
+const { helpFeature } = require("../features/help");
 
-// AI & NPC
-const askAI = require("../ai/ask");
-const npcChat = require("../ai/npc");
+const { aiAskFeature } = require("../ai/ask");
+const { aiNpcFeature } = require("../ai/npc");
+const { aiMemeFeature } = require("../ai/meme");
+const { aiReportFeature } = require("../ai/antiCheat");
 
-module.exports = async function menuHandler(bot, query) {
-const chatId = query.message.chat.id;
-const userId = query.from.id;
-const action = query.data;
+const { mainMenu, aiMenu, profileMenu } = require("../utils/menu");
+const { t } = require("../i18n");
 
-switch (action) {
-case "farm":
-await farmFeature(bot, chatId, userId);
-break;
+async function handleMenu(bot, query, lang="en") {
+  const chatId = query.message.chat.id;
+  const data = query.data;
 
-case "profile":
-await profileFeature(bot, chatId, userId);
-break;
+  try {
+    switch (data) {
+      case "main_menu":
+        await bot.editMessageText(t(lang, "menu_main") || "📍 Main Menu:", {
+          chat_id: chatId,
+          message_id: query.message.message_id,
+          ...mainMenu(lang)
+        });
+        break;
 
-case "shop":
-await shopFeature(bot, chatId);
-break;
+      case "farm":
+        await farmLogic(bot, chatId, lang);
+        break;
 
-case "settings":
-await settingsFeature(bot, chatId);
-break;
+      case "claim":
+        await claimLogic(bot, chatId, lang);
+        break;
 
-case "help":
-await helpFeature(bot, chatId);
-break;
+      case "shop":
+        await shopLogic(bot, chatId, lang);
+        break;
 
-// 🚀 Menu AI
-case "ai":
-await bot.sendMessage(chatId, "💡 Hãy dùng lệnh /ai <câu hỏi> để trò chuyện với AI.");
-break;
+      case "settings":
+        await settingsLogic(bot, chatId, lang);
+        break;
 
-// 🚀 Menu NPC
-case "npc":
-const npcAnswer = await npcChat(userId, "Xin chào NPC!");
-await bot.sendMessage(chatId, "🧑‍🌾 NPC Jipu: " + npcAnswer);
-break;
+      case "profile":
+        await profileFeature(bot, query.message, chatId);
+        await bot.sendMessage(chatId, t(lang, "profile_title") || "👤 Profile", profileMenu(lang));
+        break;
 
-default:
-await bot.sendMessage(chatId, "❓ Không rõ lựa chọn.");
+      case "invite":
+        await bot.sendMessage(chatId, (t(lang, "invite_text") || "🔗 Invite your friends with this link:") + 
+          ` https://t.me/jipu_farm_bot?start=${chatId}`);
+        break;
+
+      case "help":
+        await helpFeature(bot, query.message, chatId);
+        break;
+
+      // ---- AI Zone ----
+      case "ai_zone":
+        await bot.editMessageText(t(lang, "menu_ai_title") || "🤖 Jipu AI Zone", {
+          chat_id: chatId,
+          message_id: query.message.message_id,
+          ...aiMenu(lang)
+        });
+        break;
+
+      case "ai_ask":
+        await aiAskFeature(bot, chatId, lang);
+        break;
+
+      case "ai_npc":
+        await aiNpcFeature(bot, chatId, lang);
+        break;
+
+      case "ai_meme":
+        await aiMemeFeature(bot, chatId, lang);
+        break;
+
+      case "ai_report":
+        await aiReportFeature(bot, chatId, lang);
+        break;
+
+      // Optional placeholders
+      case "withdraw":
+        await bot.sendMessage(chatId, t(lang, "withdraw_coming") || "💰 Withdraw coming soon.");
+        break;
+
+      case "upgrade":
+        await shopLogic(bot, chatId, lang);
+        break;
+
+      case "quest":
+        await bot.sendMessage(chatId, t(lang, "quest_coming") || "🎯 Daily quests coming soon.");
+        break;
+
+      default:
+        await bot.answerCallbackQuery(query.id, { text: "Unknown action" });
+        break;
+    }
+  } catch (err) {
+    console.error("❌ handleMenu error:", err);
+    try { await bot.answerCallbackQuery(query.id, { text: "⚠️ Error occurred" }); } catch {}
+  }
 }
-};
+
+module.exports = { handleMenu };

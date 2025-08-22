@@ -1,14 +1,14 @@
 {
   "name": "jipu-bot",
   "version": "1.0.0",
-  "description": "Jipu Farm Bot with AI & Menu",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "migrate:users": "node src/scripts/migrate_users_to_mongo.js",
+    "cleanup:users": "node src/scripts/cleanup_users.js"
   },
   "dependencies": {
-    "node-telegram-bot-api": "^0.61.0",
-    "openai": "^4.0.0",
     "body-parser": "^1.20.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",

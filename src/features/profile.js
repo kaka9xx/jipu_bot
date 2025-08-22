@@ -1,6 +1,30 @@
-const userRepo = require('../services/userRepo');
+//src/features/profile.js
+const { getUserByIdAndUpdate } = require("../core/user");
+const { t } = require("../i18n");
 
-module.exports = async function profileFeature(bot, chatId, userId) {
-  const user = await userRepo.findOrCreate(userId);
-  await bot.sendMessage(chatId, `👤 Hồ sơ của bạn:\n- ID: ${user.id}\n- Token: ${user.tokens}`);
-};
+async function profileFeature(bot, msg, chatId) {
+  // ✅ Lấy user và cập nhật tên/username mới nhất
+  let user = await getUserByIdAndUpdate(chatId, msg);
+
+  if (!user) {
+    await bot.sendMessage(chatId, "⚠️ No profile found. Try /start first.");
+    return;
+  }
+
+  const lang = user.lang || "en";
+
+  const profileText = [
+    `🧑 ${t(lang, "profile_name")}: ${user.first_name || user.username || "N/A"}`,
+    `🌐 ${t(lang, "profile_lang")}: ${user.lang}`,
+    `💰 ${t(lang, "profile_points")}: ${user.points || 0}`,
+    `📅 ${t(lang, "profile_created")}: ${user.createdAt ? new Date(user.createdAt).toLocaleString() : "N/A"}`
+  ].join("\n");
+
+  try {
+    await bot.sendMessage(chatId, profileText, { parse_mode: "Markdown" });
+  } catch (err) {
+    console.error("❌ Failed to send profile:", err.message);
+  }
+}
+
+module.exports = { profileFeature };

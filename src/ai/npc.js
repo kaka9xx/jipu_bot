@@ -1,23 +1,9 @@
-// ai/npc.js
-// NPC trả lời tuỳ chỉnh dựa trên hành vi người dùng (DB)
+// src/ai/npc.js
+const { t } = require("../i18n");
 
-const askAI = require("./ask");
-const userRepo = require("../services/userRepo");
+async function aiNpcFeature(bot, chatId, lang="en") {
+  const msg = t(lang, "ai_npc_intro") || "👾 Jipu NPC: Today's quest — Tap 50 times to earn +10% bonus!";
+  await bot.sendMessage(chatId, msg);
+}
 
-module.exports = async function npcChat(userId, message) {
-// Lấy user từ DB
-const user = await userRepo.findOrCreate(userId);
-
-// Tạo "tính cách" NPC dựa trên dữ liệu
-const personality = `
-Bạn là NPC "Jipu" trong game farm.
-Người chơi hiện có ${user.tokens || 0} $JIP token.
-Bạn phải trả lời ngắn gọn, dễ thương, dí dỏm như nhân vật chibi.
-`;
-
-// Gửi vào AI
-const prompt = personality + "\nNgười chơi: " + message;
-
-const reply = await askAI(prompt);
-return reply;
-};
+module.exports = { aiNpcFeature };

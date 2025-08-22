@@ -1,13 +1,40 @@
-module.exports = async function startFeature(bot, chatId) {
-  await bot.sendMessage(chatId, "👋 Chào mừng bạn đến với Jipu Farm!", {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: "🌾 Farm", callback_data: "farm" }],
-        [{ text: "🧑 Hồ sơ", callback_data: "profile" }],
-        [{ text: "🛒 Shop", callback_data: "shop" }],
-        [{ text: "⚙️ Cài đặt", callback_data: "settings" }],
-        [{ text: "ℹ️ Trợ giúp", callback_data: "help" }]
-      ]
-    }
-  });
-};
+// src/features/start.js
+const { getUserById, addOrUpdateUser } = require("../core/user");
+const { showMainMenu } = require("../utils/menu");
+const { t } = require("../i18n");
+
+async function startFeature(bot, msg, chatId) {
+  // ✅ phải await vì getUserById là async
+  let user = await getUserById(chatId);
+  let lang = user?.lang || "en";
+
+  if (!user) {
+    // ✅ thêm await khi lưu user mới
+    user = await addOrUpdateUser({
+      id: chatId,
+      lang,
+      username: msg.from?.username,
+      first_name: msg.from?.first_name,
+    });
+  }
+
+  // Intro text (sử dụng i18n)
+  const name = user.first_name || user.username || "friend";
+  const intro = [
+    "👋 " + t(lang, "welcome",{ name } ), // key: "welcome": "Welcome to JIPU bot!"
+    t(lang, "about"),
+    t(lang, "features"),
+    t(lang, "links"),
+  ].join("\n\n");
+
+  try {
+    await bot.sendMessage(chatId, intro, { parse_mode: "Markdown" });
+  } catch (err) {
+    console.error("❌ Failed to send intro:", err.message);
+  }
+
+  // ✅ Gọi main menu với ngôn ngữ đã lấy từ DB
+  showMainMenu(bot, chatId, lang);
+}
+
+module.exports = { startFeature };
