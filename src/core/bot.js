@@ -4,7 +4,7 @@ const { helpFeature } = require("../features/help");
 
 const { handleCommand } = require("./commandHandler");
 const { handleMenu } = require("./menuHandler");
-const { getUserById } = require("./user");
+const { getUserById, updateUserFromMsg } = require("./user");
 const { listUsersFeature } = require("../features/listUsers");
 const {
   deleteUserFeature,
