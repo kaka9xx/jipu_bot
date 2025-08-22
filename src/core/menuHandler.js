@@ -16,7 +16,7 @@ const { aiNpcFeature } = require("../ai/npc");
 const { aiMemeFeature } = require("../ai/meme");
 const { aiReportFeature } = require("../ai/antiCheat");
 
-const { mainMenu, aiMenu, profileMenu } = require("../utils/menu");
+const { mainMenu, aiMenu, profileMenu, showMainMenu } = require("../utils/menu");
 const { t } = require("../i18n");
 
 async function handleMenu(bot, query, lang="en") {
@@ -65,6 +65,11 @@ async function handleMenu(bot, query, lang="en") {
  // ⚙️ Settings: bật/tắt reply menu
       case "settings_reply_menu":
         await settingsToggleReplyMenu(bot, chatId);
+        break;
+
+ // 🔙 Quay lại menu chính
+      case "back_to_menu":
+        await showMainMenu(bot, chatId, lang);
         break;
 
 
