@@ -12,6 +12,11 @@ async function handleCommand(bot, msg, lang) {
   const text = (msg.text || "").trim();
 
   // Các command chính
+     if (text.startsWith("/start")) {
+    showMainMenu(bot, chatId, lang);
+    return;
+  }
+
   if (text.startsWith("/help") || text === t(lang, "btn_help")) {
     await helpFeature(bot, msg, chatId);
     return;

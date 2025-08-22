@@ -58,5 +58,7 @@
   "reply_menu_enabled": "✅ Đã bật Reply Menu.",
   "reply_menu_disabled": "📴 Đã tắt Reply Menu.",
   "btn_change_lang": "Thay đổi ngôn ngữ",
-  "btn_toggle_reply_menu": "Bật/Tắt menu Inline"
+  "btn_toggle_reply_menu": "Bật/Tắt menu Inline",
+   "choose_language": "chọn ngôn ngữ:",
+     "lang_updated": "Ngôn ngữ đã được cập nhật thành công!"
 }
